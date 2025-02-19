@@ -38,8 +38,10 @@ class MyApp extends StatelessWidget {
 }
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -99,9 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class ProfileScreen extends StatelessWidget {
-  final String username;
+  const ProfileScreen({required this.username, super.key});
 
-  ProfileScreen({required this.username});
+  final String username;
 
   @override
   Widget build(BuildContext context) {
