@@ -65,25 +65,165 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login Screen')),
+      // appBar: AppBar(title: Text('Login Screen')),
+      backgroundColor: const Color(0xFFACD4AE),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              onChanged: (value) => username = value,
-              decoration: InputDecoration(labelText: 'Username'),
+            Text(
+              'Login',
+              style: Theme.of(context).textTheme.displayLarge,
             ),
-            TextField(
-              onChanged: (value) => password = value,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => username = value,
+                decoration: InputDecoration(
+                  label: Text('Username', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => password = value,
+                decoration: InputDecoration(
+                  label: Text('Password', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Do not have an account?', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13.0)),
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    print('Sign up button pressed.');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                    );
+                  }, // TODO: Direct user to sign up screen
+                  child: Text('Sign Up', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 13.0)),
+                ),
+                // TextButton(
+                //   onPressed: () {},
+                //   child: Text('Sign Up', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 13.0)),
+                // ),
+              ],
+            ),
+            ElevatedButton( // TODO: Change button style to button style
               onPressed: login,
               child: Text('Login'),
+            ),
+            if (errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  errorMessage,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  String firstName = '';
+  String surname = '';
+  String username = '';
+  String password = '';
+  String repeatPassword = '';
+  String errorMessage = '';
+
+  void signUp() {
+    print('nothing so far');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFACD4AE),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Sign Up',
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => username = value,
+                decoration: InputDecoration(
+                  label: Text('First Name', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => username = value,
+                decoration: InputDecoration(
+                  label: Text('Surname', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => username = value,
+                decoration: InputDecoration(
+                  label: Text('Username', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => password = value,
+                decoration: InputDecoration(
+                  label: Text('Password', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) => password = value,
+                decoration: InputDecoration(
+                  label: Text('Repeat Password', style: Theme.of(context).textTheme.bodyMedium),
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+            ),
+            ElevatedButton( // TODO: Change button style to button style
+              onPressed: signUp,
+              child: Text('Sign Up'),
             ),
             if (errorMessage.isNotEmpty)
               Padding(
