@@ -11,11 +11,33 @@ final ThemeData appTheme = ThemeData(
   // colorScheme: appTheme.colorScheme.copyWith(secondary: Colors.orange),
   colorScheme:  ColorScheme.fromSeed(seedColor: mainColour),
   scaffoldBackgroundColor: backgroundColour,
-  textTheme: GoogleFonts.interTextTheme(),
-  // textTheme: TextTheme(
-  //   headlineLarge: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.black),
-  //   bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black),
-  // ),
+  textTheme: GoogleFonts.interTextTheme(
+    TextTheme(
+      displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.w800, color: mainColour),
+      displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w800, color: mainColour),
+      displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.w800, color: mainColour),
+
+      headlineLarge: TextStyle(fontSize: 40.0, fontWeight: FontWeight.w700, color: mainColour),
+      headlineMedium: TextStyle(fontSize: 36.0, fontWeight: FontWeight.w700, color: mainColour),
+      headlineSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600, color: mainColour),
+
+      titleLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w400, color: mainColour),
+      // not using below
+      // titleMedium: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: mainColour),
+      // titleSmall: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: mainColour),
+
+      labelLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600, color: mainColour),
+      labelMedium: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500, color: mainColour),
+      // use below for links
+      labelSmall: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w800, color: mainColour),
+
+      bodyLarge: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: mainColour),
+      // use below for text input placeholders
+      bodyMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: const Color(0xFF797979)),
+      // use below for sub mini titles
+      bodySmall: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300, color: mainColour),
+    )
+  ),
   buttonTheme: ButtonThemeData(
     buttonColor: mainColour,
     textTheme: ButtonTextTheme.primary,
