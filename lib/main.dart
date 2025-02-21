@@ -155,6 +155,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String repeatPassword = '';
   String errorMessage = '';
 
+  void onBackButtonPressed() {
+    print('Back button pressed.');
+    Navigator.pop(context);
+  }
+
   void signUp() {
     print('nothing so far');
   }
@@ -163,6 +168,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFACD4AE),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFACD4AE),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF326335),),
+          onPressed: onBackButtonPressed,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
