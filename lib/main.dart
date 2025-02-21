@@ -32,7 +32,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
+      },
     );
   }
 }
@@ -48,6 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
   String username = '';
   String password = '';
   String errorMessage = '';
+
+  void onSignUpButtonPressed() {
+    print('Sign up button pressed.');
+    Navigator.pushNamed(context, '/signup');
+  }
 
   void login() {
     setState(() {
@@ -103,13 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text('Do not have an account?', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13.0)),
                 SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {
-                    print('Sign up button pressed.');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()),
-                    );
-                  }, // TODO: Direct user to sign up screen
+                  onTap: onSignUpButtonPressed, // TODO: Direct user to sign up screen
                   child: Text('Sign Up', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 13.0)),
                 ),
                 // TextButton(
