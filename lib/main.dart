@@ -290,83 +290,95 @@ class _HomePage extends State<HomePage> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(navbarOptions.elementAt(selectedIndex), style: Theme.of(context).textTheme.displayMedium),
-            bottom: TabBar(
-              tabs: [
-                Tab(text: 'Tours'),
-                Tab(text: 'Booked'),
-              ],
-            ),
+            bottom: selectedIndex == 0
+              ? TabBar(
+                  tabs: [
+                    Tab(text: 'Tours'),
+                    Tab(text: 'Booked'),
+                  ],
+                ) : null,
           ),
-          body: TabBarView(
-            children: [
-              // Tours tab below
-              Column(
+          body: selectedIndex == 0
+            ? TabBarView(
                 children: [
-                  Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text('London'),
-                          subtitle: Text('February 2nd, 2025'),
-                        ),
-                        Text('Includes London Eye, London Bridge, Big Ben,', textAlign: TextAlign.left,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Tours tab below
+                  Column(
+                    children: [
+                      Card(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text('1/10 Booked'),
+                            ListTile(
+                              title: Text('London'),
+                              subtitle: Text('February 2nd, 2025'),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: TextButton(
-                                onPressed: onBookButtonPressed,
-                                child: Text('Book', style: Theme.of(context).textTheme.labelLarge),
-                              ),
+                            Text('Includes London Eye, London Bridge, Big Ben,', textAlign: TextAlign.left,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text('1/10 Booked'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: TextButton(
+                                    onPressed: onBookButtonPressed,
+                                    child: Text('Book', style: Theme.of(context).textTheme.labelLarge),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]
+                  ),
+                  // Booked tab below
+                  Column(
+                    children: [
+                      Card(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Text('London'),
+                              subtitle: Text('February 2nd, 2025'),
+                            ),
+                            Text('Includes Buckingham Palace, Piccadilly Circus', textAlign: TextAlign.left,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text('3/10 Booked'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: TextButton(
+                                    onPressed: onBookButtonPressed,
+                                    child: Text('Cancel', style: Theme.of(context).textTheme.labelLarge),
+                                  ),
+                                )
+                              ],
                             )
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ]
                   ),
-                ]
-              ),
-              // Booked tab below
-              Column(
-                children: [
-                  Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text('London'),
-                          subtitle: Text('February 2nd, 2025'),
-                        ),
-                        Text('Includes Buckingham Palace, Piccadilly Circus', textAlign: TextAlign.left,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text('3/10 Booked'),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: TextButton(
-                                onPressed: onBookButtonPressed,
-                                child: Text('Cancel', style: Theme.of(context).textTheme.labelLarge),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ]
-              ),
-            ],
-          ),
+                ],
+              ) : selectedIndex == 1
+                ? Column(
+                  children: [
+                    Text('Weather'),
+                  ],
+                ) 
+                : Column(
+                  children: [
+                    Text('Profile'),
+                  ],
+                ),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
