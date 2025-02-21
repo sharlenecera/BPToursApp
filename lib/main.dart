@@ -265,6 +265,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePage extends State<HomePage> {
 
+  int selectedIndex = 0;
+  static const List<String> navbarOptions = [
+    'Home',
+    'Weather',
+    'Profile'
+  ];
+
+  void onNavOptionPressed(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   void onBookButtonPressed() {
     print('Book button pressed.');
   }
@@ -276,6 +289,7 @@ class _HomePage extends State<HomePage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            title: Text(navbarOptions.elementAt(selectedIndex), style: Theme.of(context).textTheme.displayMedium),
             bottom: TabBar(
               tabs: [
                 Tab(text: 'Tours'),
@@ -285,6 +299,7 @@ class _HomePage extends State<HomePage> {
           ),
           body: TabBarView(
             children: [
+              // Tours tab below
               Column(
                 children: [
                   Card(
@@ -311,12 +326,13 @@ class _HomePage extends State<HomePage> {
                               ),
                             )
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ]
               ),
+              // Booked tab below
               Column(
                 children: [
                   Card(
@@ -350,6 +366,16 @@ class _HomePage extends State<HomePage> {
                 ]
               ),
             ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.cloud_outlined), label: 'Weather'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            ],
+            currentIndex: selectedIndex,
+            selectedItemColor: const Color(0xFF326335),
+            onTap: onNavOptionPressed,
           ),
         ),
       ),
