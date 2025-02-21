@@ -267,7 +267,7 @@ class _HomePage extends State<HomePage> {
 
   int selectedIndex = 0;
   static const List<String> navbarOptions = [
-    'Home',
+    '',
     'Weather',
     'Profile'
   ];
@@ -282,6 +282,10 @@ class _HomePage extends State<HomePage> {
     print('Book button pressed.');
   }
 
+  void searchLocation(String location) {
+    print('Searching for $location');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -289,7 +293,13 @@ class _HomePage extends State<HomePage> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(navbarOptions.elementAt(selectedIndex), style: Theme.of(context).textTheme.displayMedium),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 10),
+                Text(navbarOptions.elementAt(selectedIndex), style: Theme.of(context).textTheme.displayMedium),
+              ],
+            ),
             bottom: selectedIndex == 0
               ? TabBar(
                   tabs: [
@@ -299,9 +309,10 @@ class _HomePage extends State<HomePage> {
                 ) : null,
           ),
           body: selectedIndex == 0
+            // Home Page ------------------------------------------------------------------------
             ? TabBarView(
                 children: [
-                  // Tours tab below
+                  // Tours tab below ------------------------------------------------------------
                   Column(
                     children: [
                       Card(
@@ -334,7 +345,7 @@ class _HomePage extends State<HomePage> {
                       ),
                     ]
                   ),
-                  // Booked tab below
+                  // Booked tab below -----------------------------------------------------------
                   Column(
                     children: [
                       Card(
@@ -369,11 +380,70 @@ class _HomePage extends State<HomePage> {
                   ),
                 ],
               ) : selectedIndex == 1
+                // Weather Page -----------------------------------------------------------------
                 ? Column(
                   children: [
-                    Text('Weather'),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: TextField( // TODO: Implement a text input widget to reuse
+                        decoration: InputDecoration(
+                          hintText: 'Search Location',
+                          border: OutlineInputBorder(),
+                        ),
+                        
+                        onChanged: (value) {
+                          searchLocation(value);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Row(
+                        children: [
+                          Text('London', style: Theme.of(context).textTheme.headlineLarge),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Row(
+                        children: [
+                          Text('5°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
+                          SizedBox(width: 10),
+                          Text('Cloudy', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Row(
+                        children: [
+                          Text('Feb 11, 2025', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.0)),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 200,
+                              color: Colors.blue,
+                              child: Column(
+                                children: [
+                                  Text('Morning', style: Theme.of(context).textTheme.bodyMedium),
+                                  Text('5°C', style: Theme.of(context).textTheme.bodyMedium),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
                   ],
                 ) 
+                // Profile Page -----------------------------------------------------------------
                 : Column(
                   children: [
                     Text('Profile'),
