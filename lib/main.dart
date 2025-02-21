@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/home': (context) => const HomePage(username: 'admin'),
       },
     );
   }
@@ -61,10 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void login() {
     setState(() {
       if (username == 'admin' && password == '1234') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(username: username)),
-        );
+        Navigator.pushNamed(context, '/home');
       } else {
         errorMessage = 'Invalid credentials';
       }
@@ -123,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             ElevatedButton( // TODO: Change button style to button style
               onPressed: login,
-              child: Text('Login'),
+              child: Text('Login', style: Theme.of(context).textTheme.labelLarge),
             ),
             if (errorMessage.isNotEmpty)
               Padding(
@@ -238,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             ElevatedButton( // TODO: Change button style to button style
               onPressed: signUp,
-              child: Text('Sign Up'),
+              child: Text('Sign Up', style: Theme.of(context).textTheme.labelLarge),
             ),
             if (errorMessage.isNotEmpty)
               Padding(
@@ -255,33 +253,127 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({required this.username, super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({required this.username, super.key});
 
   final String username;
 
   @override
+  State<HomePage> createState() => _HomePage();
+}
+
+
+class _HomePage extends State<HomePage> {
+
+  void onBookButtonPressed() {
+    print('Book button pressed.');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Profile Screen')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome, $username!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(text: 'Tours'),
+                Tab(text: 'Booked'),
+              ],
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Logout'),
-            ),
-          ],
+          ),
+          body: TabBarView(
+            children: [
+              Column(
+                children: [
+                  Card(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          title: Text('London'),
+                          subtitle: Text('February 2nd, 2025'),
+                        ),
+                        Text('Includes London Eye, London Bridge, Big Ben,', textAlign: TextAlign.left,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text('1/10 Booked'),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: TextButton(
+                                onPressed: onBookButtonPressed,
+                                child: Text('Book', style: Theme.of(context).textTheme.labelLarge),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ]
+              ),
+              Column(
+                children: [
+                  Card(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          title: Text('London'),
+                          subtitle: Text('February 2nd, 2025'),
+                        ),
+                        Text('Includes Buckingham Palace, Piccadilly Circus', textAlign: TextAlign.left,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text('3/10 Booked'),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: TextButton(
+                                onPressed: onBookButtonPressed,
+                                child: Text('Cancel', style: Theme.of(context).textTheme.labelLarge),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ]
+              ),
+            ],
+          ),
         ),
       ),
     );
+    // return Scaffold(
+    //   appBar: AppBar(title: Text('Profile Screen')),
+    //   body: Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         Text(
+    //           'Welcome, $username!',
+    //           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    //         ),
+    //         SizedBox(height: 20),
+    //         ElevatedButton(
+    //           onPressed: () {
+    //             Navigator.pop(context);
+    //           },
+    //           child: Text('Logout'),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
