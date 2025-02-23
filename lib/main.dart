@@ -21,21 +21,19 @@ final ThemeData appTheme = ThemeData(
       headlineMedium: TextStyle(fontSize: 36.0, fontWeight: FontWeight.w700, color: mainColour),
       headlineSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600, color: mainColour),
 
-      titleLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w400, color: mainColour),
-      // not using below
-      // titleMedium: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: mainColour),
-      // titleSmall: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: mainColour),
+      titleLarge: TextStyle(fontSize: 80.0, fontWeight: FontWeight.w400, color: mainColour),
+      titleMedium: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w500, color: mainColour),
+      titleSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: mainColour),
 
       labelLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600, color: mainColour),
       labelMedium: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500, color: mainColour),
       // use below for links
       labelSmall: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w800, color: mainColour),
 
-      bodyLarge: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: mainColour),
-      // use below for text input placeholders
-      bodyMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: const Color(0xFF797979)),
+      bodyLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w400, color: mainColour),
+      bodyMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: mainColour),
       // use below for sub mini titles
-      bodySmall: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w300, color: mainColour),
+      bodySmall: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300, color: mainColour),
     )
   ),
   buttonTheme: ButtonThemeData(
