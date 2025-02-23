@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/home': (context) => const HomePage(username: 'admin'),
+        '/notifications': (context) => const NotificationsPage(),
       },
     );
   }
@@ -297,6 +298,10 @@ class _HomePage extends State<HomePage> {
               children: [
                 SizedBox(width: 10),
                 Text(navbarOptions.elementAt(selectedIndex), style: Theme.of(context).textTheme.displayMedium),
+                SizedBox(width: 180),
+                selectedIndex == 2 ? NotificationButton(onPressed: () {
+                  Navigator.pushNamed(context, '/notifications');
+                }) : Container(),
               ],
             ),
             bottom: selectedIndex == 0
@@ -464,6 +469,7 @@ class _HomePage extends State<HomePage> {
                   child: Column(
                     children: [
                       Text('Profile'),
+                      
                     ],
                   ),
                 ),
@@ -501,5 +507,19 @@ class _HomePage extends State<HomePage> {
     //     ),
     //   ),
     // );
+  }
+}
+
+class NotificationsPage extends StatefulWidget {
+  const NotificationsPage({super.key});
+
+  @override
+  State<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends State<NotificationsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
