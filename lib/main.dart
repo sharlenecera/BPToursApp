@@ -527,8 +527,79 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
+  final List<NotificationBox> notifications = [];
+  final List<Map<String, String>> notificationData = [
+      {
+        'message': 'You booked a tour in London for February 2nd',
+        'time': '1 day ago',
+      },
+      {
+        'message': 'You booked a tour in Bath for February 5th',
+        'time': '2 days ago',
+      },
+    ];
+
+    // NotificationBox(message: 'You booked a tour in Bath for February 5th', time: '2 days ago', onPressed: onCloseButtonPressed),
+
+  void removeNotification(int index) {
+    if (index >= 0 && index < notificationData.length) {
+      setState(() {
+        notificationData.removeAt(index);
+      });
+    }
+    else {
+      print('Invalid index: $index');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: const Color(0xFFACD4AE),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFACD4AE),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: const Color(0xFF326335),),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Notifications', style: Theme.of(context).textTheme.displayMedium),
+          ],
+        ),
+      ),
+      body: notificationData.isEmpty
+      ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('No notifications', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 20.0)),
+          ],
+        ),
+      ) : Center(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: ListView.builder(
+            itemCount: notificationData.length,
+            itemBuilder: (context, index) {
+              final notification = notificationData[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: NotificationBox(
+                  message: notification['message'] ?? 'No message',
+                  time: notification['time'] ?? 'No time',
+                  onPressed: () {
+                    removeNotification(index);
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      )
+    );
   }
 }
