@@ -1,4 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+final mainColour = const Color(0xFF326335);
+final backgroundColour = const Color(0xFFACD4AE);
+
+// Setting the theme for colours and text
+final ThemeData appTheme = ThemeData(
+  // primarySwatch: Colors.blue,
+  // primaryColor: Colors.blue,
+  // colorScheme: appTheme.colorScheme.copyWith(secondary: Colors.orange),
+  colorScheme:  ColorScheme.fromSeed(seedColor: mainColour),
+  scaffoldBackgroundColor: backgroundColour,
+  textTheme: GoogleFonts.interTextTheme(
+    TextTheme(
+      displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.w800, color: mainColour),
+      displayMedium: TextStyle(fontSize: 48.0, fontWeight: FontWeight.w800, color: mainColour),
+      displaySmall: TextStyle(fontSize: 36.0, fontWeight: FontWeight.w800, color: mainColour),
+
+      headlineLarge: TextStyle(fontSize: 40.0, fontWeight: FontWeight.w700, color: mainColour),
+      headlineMedium: TextStyle(fontSize: 36.0, fontWeight: FontWeight.w700, color: mainColour),
+      headlineSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600, color: mainColour),
+
+      titleLarge: TextStyle(fontSize: 80.0, fontWeight: FontWeight.w400, color: mainColour),
+      titleMedium: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w500, color: mainColour),
+      titleSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400, color: mainColour),
+
+      labelLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600, color: mainColour),
+      labelMedium: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500, color: mainColour),
+      // use below for links
+      labelSmall: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w800, color: mainColour),
+
+      bodyLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w400, color: mainColour),
+      bodyMedium: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: mainColour),
+      // use below for sub mini titles
+      bodySmall: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w300, color: mainColour),
+    )
+  ),
+  buttonTheme: ButtonThemeData(
+    buttonColor: mainColour,
+    textTheme: ButtonTextTheme.primary,
+  ),
+  appBarTheme: AppBarTheme(
+    color: mainColour,
+    toolbarTextStyle: GoogleFonts.inter(
+      textStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+    ),
+    titleTextStyle: GoogleFonts.inter(
+      textStyle: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
+    ),
+  ),
+    useMaterial3: true,
+);
 
 void main() {
   runApp(const MyApp());
@@ -12,26 +64,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Login App',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: appTheme,
       home: LoginScreen(),
     );
   }
