@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'widgets/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,8 +29,8 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFACD4AE)),
+        shadowColor: Color(0xFF797979),
         useMaterial3: true,
       ),
       initialRoute: '/',
@@ -119,10 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // ),
               ],
             ),
-            ElevatedButton( // TODO: Change button style to button style
-              onPressed: login,
-              child: Text('Login', style: Theme.of(context).textTheme.labelLarge),
-            ),
+            PrimaryButton(label: 'Login', onPressed: login),
             if (errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -234,10 +232,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 obscureText: true,
               ),
             ),
-            ElevatedButton( // TODO: Change button style to button style
-              onPressed: signUp,
-              child: Text('Sign Up', style: Theme.of(context).textTheme.labelLarge),
-            ),
+            PrimaryButton(label: 'Sign Up', onPressed: signUp),
             if (errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
@@ -279,6 +274,10 @@ class _HomePage extends State<HomePage> {
 
   void onBookButtonPressed() {
     print('Book button pressed.');
+  }
+
+  void onCancelButtonPressed() {
+    print('Cancel button pressed.');
   }
 
   void searchLocation(String location) {
@@ -337,7 +336,7 @@ class _HomePage extends State<HomePage> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: TextButton(
                                       onPressed: onBookButtonPressed,
-                                      child: Text('Book', style: Theme.of(context).textTheme.labelLarge),
+                                      child: PrimaryButton(label: 'Book', onPressed: onBookButtonPressed),
                                     ),
                                   )
                                 ],
@@ -370,7 +369,7 @@ class _HomePage extends State<HomePage> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: TextButton(
                                       onPressed: onBookButtonPressed,
-                                      child: Text('Cancel', style: Theme.of(context).textTheme.labelLarge),
+                                      child: SecondaryButton(label: 'Cancel', onPressed: onCancelButtonPressed),
                                     ),
                                   )
                                 ],
