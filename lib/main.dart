@@ -432,14 +432,24 @@ class _HomePage extends State<HomePage> {
                           children: [
                             Expanded(
                               child: Container(
-                                height: 200,
-                                color: Colors.blue,
-                                child: Column(
-                                  children: [
-                                    Text('Morning', style: Theme.of(context).textTheme.bodyMedium),
-                                    Text('5°C', style: Theme.of(context).textTheme.bodyMedium),
-                                  ],
+                                height: 104,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    HourlyTemperature(time: '7:00', temperature: '5°C'),
+                                    HourlyTemperature(time: '8:00', temperature: '5°C'),
+                                    HourlyTemperature(time: '9:00', temperature: '5°C'),
+                                    HourlyTemperature(time: '10:00', temperature: '5°C'),
+                                    HourlyTemperature(time: '11:00', temperature: '6°C'),
+                                    HourlyTemperature(time: '12:00', temperature: '7°C'),
+                                    HourlyTemperature(time: '13:00', temperature: '8°C'),
+                                    HourlyTemperature(time: '14:00', temperature: '7°C'),
+                                  ],
+                                )
                               ),
                             )
                           ],
