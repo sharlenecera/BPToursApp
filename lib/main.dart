@@ -466,11 +466,20 @@ class _HomePage extends State<HomePage> {
                 // Profile Page -----------------------------------------------------------------
                 : Container(
                   color: const Color(0xFFACD4AE),
-                  child: Column(
-                    children: [
-                      Text('Profile'),
-                      
-                    ],
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(25.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('John Doe', style: Theme.of(context).textTheme.displaySmall),
+                        Text('john_doe1', style: Theme.of(context).textTheme.labelLarge),
+                        Text('Birthday', style: Theme.of(context).textTheme.headlineSmall),
+                        Text('Unknown', style: Theme.of(context).textTheme.bodyLarge),
+                        Text('Home City', style: Theme.of(context).textTheme.headlineSmall),
+                        Text('Unknown', style: Theme.of(context).textTheme.bodyLarge),
+                      ],
+                    ),
                   ),
                 ),
           bottomNavigationBar: BottomNavigationBar(
