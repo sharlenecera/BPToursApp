@@ -22,15 +22,31 @@ class _WeatherPageState extends State<WeatherPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: TextField( // TODO: Implement a text input widget to reuse
-              decoration: InputDecoration(
-                hintText: 'Search Location',
-                border: OutlineInputBorder(),
-              ),
-              
-              onChanged: (value) {
-                searchLocation(value);
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField( // TODO: Implement a text input widget to reuse
+                    decoration: InputDecoration(
+                      hintText: 'Search Location',
+                      border: OutlineInputBorder(),
+                    ),
+                    
+                    // onChanged: (value) {
+                    //   searchLocation(value);
+                    // },
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                  child: IconButton(
+                    iconSize: 40,
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      searchLocation('a location');
+                    },
+                  ),
+                )
+              ],
             ),
           ),
           Padding(
