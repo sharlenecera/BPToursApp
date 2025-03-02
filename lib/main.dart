@@ -5,6 +5,7 @@ void main() {
   runApp(const MyApp());
 }
 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -44,12 +45,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
+
 
 class _LoginScreenState extends State<LoginScreen> {
   String username = '';
@@ -137,12 +140,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
+
 
 class _SignUpScreenState extends State<SignUpScreen> {
   String firstName = '';
@@ -249,6 +254,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
+
 class HomePage extends StatefulWidget {
   const HomePage({required this.username, super.key});
 
@@ -258,8 +264,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePage();
 }
 
-class _HomePage extends State<HomePage> {
 
+class _HomePage extends State<HomePage> {
   int selectedIndex = 0;
   static const List<String> navbarOptions = [
     '',
@@ -519,12 +525,14 @@ class _HomePage extends State<HomePage> {
   }
 }
 
+
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 
   @override
   State<NotificationsPage> createState() => _NotificationsPageState();
 }
+
 
 class _NotificationsPageState extends State<NotificationsPage> {
   final List<NotificationBox> notifications = [];
@@ -538,8 +546,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
         'time': '2 days ago',
       },
     ];
-
-    // NotificationBox(message: 'You booked a tour in Bath for February 5th', time: '2 days ago', onPressed: onCloseButtonPressed),
 
   void removeNotification(int index) {
     if (index >= 0 && index < notificationData.length) {
