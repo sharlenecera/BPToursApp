@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'widgets/widgets.dart';
 
@@ -10,8 +9,28 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  void searchLocation(String location) {
-    print('Searching for $location');
+  final _controller = TextEditingController();
+
+  void _searchLocation() {
+    final text = _controller.text;
+    print('Searching for $text (${text.characters.length})');
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    _controller.addListener(_searchLocation);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -26,6 +45,7 @@ class _WeatherPageState extends State<WeatherPage> {
               children: [
                 Expanded(
                   child: TextField( // TODO: Implement a text input widget to reuse
+                    controller: _controller,
                     decoration: InputDecoration(
                       hintText: 'Search Location',
                       border: OutlineInputBorder(),
@@ -42,7 +62,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     iconSize: 40,
                     icon: const Icon(Icons.search),
                     onPressed: () {
-                      searchLocation('a location');
+                      _searchLocation();
                     },
                   ),
                 )
