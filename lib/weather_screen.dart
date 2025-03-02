@@ -12,17 +12,24 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController();
-  Future<Map<String, dynamic>>? _futureSearchResults;
+  Future<List<Map<String, dynamic>>>? _futureSearchResults;
   
   String _latitude = '';
   String _longitude = '';
   String _errorMessage = '';
   String _cityName = '';
 
-  Future<Map<String, dynamic>> _searchLocation() async {
+  Future<List<Map<String, dynamic>>> _searchLocation() async {
       //   final text = _controller.text;
       // print('Searching for $text (${text.characters.length})');
     String city = _controller.text;
+    if (city.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter a location.';
+      });
+      return [];
+    }
+
     final countryCode = 'GB';
     final resultsLimit = 5;
     final apiKey = 'd092a571f74a5876b63f080987632294';
@@ -33,35 +40,28 @@ class _WeatherPageState extends State<WeatherPage> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data.isNotEmpty) {
-          return {
-            'latitude': data[0]['lat'].toString(),
-            'longitude': data[0]['lon'].toString(),
-            'cityName': data[0]['name'],
-            'errorMessage': '',
-          };
+          return List<Map<String, dynamic>>.from(data.map((result) => {
+            'latitude': result['lat'].toString(),
+            'longitude': result['lon'].toString(),
+            'cityName': result['name'],
+          }));
         } else {
-          return {
-            'latitude': '',
-            'longitude': '',
-            'cityName': '',
-            'errorMessage': 'Location not found',
-          };
+          setState(() {
+            _errorMessage = 'Location not found.';
+          });
+          return [];
         }
       } else {
-        return {
-          'latitude': '',
-          'longitude': '',
-          'cityName': '',
-          'errorMessage': 'Error fetching data: ${response.statusCode}',
-        };
+        setState(() {
+          _errorMessage = 'Error fetching data: ${response.statusCode}';
+        });
+        return [];
       }
     } catch (e) {
-      return {
-        'latitude': '',
-        'longitude': '',
-        'cityName': '',
-        'errorMessage': 'An error occurred: $e',
-      };
+      setState(() {
+        _errorMessage = 'An error occurred: $e';
+      });
+      return [];
     }
   }
 
@@ -115,22 +115,46 @@ class _WeatherPageState extends State<WeatherPage> {
               ],
             ),
           ),
-          _futureSearchResults != null ? Expanded(
-            child: FutureBuilder<Map<String, dynamic>>(
-              future: _searchLocation(),
-              builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot){
+          (_futureSearchResults != null) ? Expanded(
+            child: FutureBuilder<List<Map<String, dynamic>>>( // Future<List<Map<String, dynamic>>>
+              future: _futureSearchResults,
+              builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot){
                 List<Widget> children;
 
                 if (snapshot.hasData) {
-                    final data = snapshot.data!;
-                    _latitude = data['latitude'];
-                    _longitude = data['longitude'];
-                    _cityName = data['cityName'];
-                    _errorMessage = data['errorMessage'];
+                    final results = snapshot.data!;
+
+                    if (results.isEmpty) {
+                      children = <Widget>[Center(child: Text('No results found'))];
+                    }
+                    print(results);
+
+                    _latitude = results[0]['latitude'];
+                    _longitude = results[0]['longitude'];
+                    _cityName = results[0]['cityName'];
 
                     children = <Widget>[Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // trying to display the results but currently not working
+                        // Expanded(
+                        //   child: ListView.builder(
+                        //     itemCount: results.length,
+                        //     itemBuilder: (context, index) {
+                        //       final result = results[index];
+                        //       return ListTile(
+                        //         title: Text(result['cityName']),
+                        //         subtitle: Column(
+                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                        //           children: [
+                        //             Text('Latitude: ${result['latitude']}'),
+                        //             Text('Longitude: ${result['longitude']}'),
+                        //           ],
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         Text('Latitude: $_latitude'),
                         Text('Longitude: $_longitude'),
                         if (_errorMessage.isNotEmpty)
@@ -197,11 +221,13 @@ class _WeatherPageState extends State<WeatherPage> {
                     )];
                   } else if (snapshot.hasError) {
                     children = <Widget>[Center(child: Text('Error: ${snapshot.error}'))];
-                  } else {
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
                     children = const <Widget>[
                       SizedBox(width: 60, height: 60, child: CircularProgressIndicator()),
                       Padding(padding: EdgeInsets.only(top: 16), child: Text('Loading...')),
                     ];
+                  } else {
+                    children = <Widget>[Center(child: Text('No data available'))];
                   }
 
                 return Center(
