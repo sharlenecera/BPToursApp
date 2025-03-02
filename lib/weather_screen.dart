@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'widgets/widgets.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -10,11 +12,50 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController();
+  String _latitude = '';
+  String _longitude = '';
+  String _errorMessage = '';
 
-  void _searchLocation() {
-    final text = _controller.text;
-    print('Searching for $text (${text.characters.length})');
+  Future<void> _searchLocation() async {
+      //   final text = _controller.text;
+      // print('Searching for $text (${text.characters.length})');
+    String city = _controller.text;
+    final countryCode = 'GB';
+    final resultsLimit = 5;
+    final apiKey = 'd092a571f74a5876b63f080987632294';
+    final apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=$city,$countryCode&limit=$resultsLimit&appid=$apiKey';
 
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          setState(() {
+            _latitude = data[0]['lat'].toString();
+            _longitude = data[0]['lon'].toString();
+            _errorMessage = '';
+          });
+        } else {
+          setState(() {
+            _latitude = 'Location not found';
+            _longitude = '';
+            _errorMessage = '';
+          });
+        }
+      } else {
+        setState(() {
+          _latitude = '';
+          _longitude = '';
+          _errorMessage = 'Error fetching data: ${response.statusCode}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _latitude = '';
+        _longitude = '';
+        _errorMessage = 'An error occurred: $e';
+      });
+    }
   }
 
   @override
@@ -22,7 +63,7 @@ class _WeatherPageState extends State<WeatherPage> {
     super.initState();
 
     // Start listening to changes.
-    _controller.addListener(_searchLocation);
+    // _controller.addListener(_searchLocation);
   }
 
   @override
@@ -69,6 +110,13 @@ class _WeatherPageState extends State<WeatherPage> {
               ],
             ),
           ),
+          Text('Latitude: $_latitude'),
+          Text('Longitude: $_longitude'),
+          if (_errorMessage.isNotEmpty)
+            Text(
+              _errorMessage,
+              style: TextStyle(color: Colors.red),
+            ),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
             child: Row(
