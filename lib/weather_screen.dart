@@ -12,11 +12,14 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController();
+  Future<Map<String, dynamic>>? _futureSearchResults;
+  
   String _latitude = '';
   String _longitude = '';
   String _errorMessage = '';
+  String _cityName = '';
 
-  Future<void> _searchLocation() async {
+  Future<Map<String, dynamic>> _searchLocation() async {
       //   final text = _controller.text;
       // print('Searching for $text (${text.characters.length})');
     String city = _controller.text;
@@ -30,31 +33,35 @@ class _WeatherPageState extends State<WeatherPage> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data.isNotEmpty) {
-          setState(() {
-            _latitude = data[0]['lat'].toString();
-            _longitude = data[0]['lon'].toString();
-            _errorMessage = '';
-          });
+          return {
+            'latitude': data[0]['lat'].toString(),
+            'longitude': data[0]['lon'].toString(),
+            'cityName': data[0]['name'],
+            'errorMessage': '',
+          };
         } else {
-          setState(() {
-            _latitude = 'Location not found';
-            _longitude = '';
-            _errorMessage = '';
-          });
+          return {
+            'latitude': '',
+            'longitude': '',
+            'cityName': '',
+            'errorMessage': 'Location not found',
+          };
         }
       } else {
-        setState(() {
-          _latitude = '';
-          _longitude = '';
-          _errorMessage = 'Error fetching data: ${response.statusCode}';
-        });
+        return {
+          'latitude': '',
+          'longitude': '',
+          'cityName': '',
+          'errorMessage': 'Error fetching data: ${response.statusCode}',
+        };
       }
     } catch (e) {
-      setState(() {
-        _latitude = '';
-        _longitude = '';
-        _errorMessage = 'An error occurred: $e';
-      });
+      return {
+        'latitude': '',
+        'longitude': '',
+        'cityName': '',
+        'errorMessage': 'An error occurred: $e',
+      };
     }
   }
 
@@ -91,10 +98,6 @@ class _WeatherPageState extends State<WeatherPage> {
                       hintText: 'Search Location',
                       border: OutlineInputBorder(),
                     ),
-                    
-                    // onChanged: (value) {
-                    //   searchLocation(value);
-                    // },
                   ),
                 ),
                 SizedBox(
@@ -103,77 +106,115 @@ class _WeatherPageState extends State<WeatherPage> {
                     iconSize: 40,
                     icon: const Icon(Icons.search),
                     onPressed: () {
-                      _searchLocation();
+                      setState(() {
+                        _futureSearchResults = _searchLocation();
+                      });
                     },
                   ),
                 )
               ],
             ),
           ),
-          Text('Latitude: $_latitude'),
-          Text('Longitude: $_longitude'),
-          if (_errorMessage.isNotEmpty)
-            Text(
-              _errorMessage,
-              style: TextStyle(color: Colors.red),
-            ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Row(
-              children: [
-                Text('London', style: Theme.of(context).textTheme.headlineLarge),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Row(
-              children: [
-                Text('5°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
-                SizedBox(width: 10),
-                Text('Cloudy', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Row(
-              children: [
-                Text('Feb 11, 2025', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.0)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 104,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
+          _futureSearchResults != null ? Expanded(
+            child: FutureBuilder<Map<String, dynamic>>(
+              future: _searchLocation(),
+              builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot){
+                List<Widget> children;
+
+                if (snapshot.hasData) {
+                    final data = snapshot.data!;
+                    _latitude = data['latitude'];
+                    _longitude = data['longitude'];
+                    _cityName = data['cityName'];
+                    _errorMessage = data['errorMessage'];
+
+                    children = <Widget>[Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        HourlyTemperature(time: '7:00', temperature: '5°C'),
-                        HourlyTemperature(time: '8:00', temperature: '5°C'),
-                        HourlyTemperature(time: '9:00', temperature: '5°C'),
-                        HourlyTemperature(time: '10:00', temperature: '5°C'),
-                        HourlyTemperature(time: '11:00', temperature: '6°C'),
-                        HourlyTemperature(time: '12:00', temperature: '7°C'),
-                        HourlyTemperature(time: '13:00', temperature: '8°C'),
-                        HourlyTemperature(time: '14:00', temperature: '7°C'),
+                        Text('Latitude: $_latitude'),
+                        Text('Longitude: $_longitude'),
+                        if (_errorMessage.isNotEmpty)
+                          Text(
+                            _errorMessage,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: [
+                              Text(_cityName.isNotEmpty ? _cityName : 'No Location', style: Theme.of(context).textTheme.headlineLarge),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: [
+                              Text('5°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
+                              SizedBox(width: 10),
+                              Text('Cloudy', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: [
+                              Text('Feb 11, 2025', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.0)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 104,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      HourlyTemperature(time: '7:00', temperature: '5°C'),
+                                      HourlyTemperature(time: '8:00', temperature: '5°C'),
+                                      HourlyTemperature(time: '9:00', temperature: '5°C'),
+                                      HourlyTemperature(time: '10:00', temperature: '5°C'),
+                                      HourlyTemperature(time: '11:00', temperature: '6°C'),
+                                      HourlyTemperature(time: '12:00', temperature: '7°C'),
+                                      HourlyTemperature(time: '13:00', temperature: '8°C'),
+                                      HourlyTemperature(time: '14:00', temperature: '7°C'),
+                                    ],
+                                  )
+                                ),
+                              )
+                            ],
+                          ),
+                        )
                       ],
-                    )
-                  ),
-                )
-              ],
-            ),
-          )
+                    )];
+                  } else if (snapshot.hasError) {
+                    children = <Widget>[Center(child: Text('Error: ${snapshot.error}'))];
+                  } else {
+                    children = const <Widget>[
+                      SizedBox(width: 60, height: 60, child: CircularProgressIndicator()),
+                      Padding(padding: EdgeInsets.only(top: 16), child: Text('Loading...')),
+                    ];
+                  }
+
+                return Center(
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: children)
+                );
+              }
+            )
+          ) : Text('No results found'),
         ],
       ),
     ) ;
   }
 }
+
+
+
