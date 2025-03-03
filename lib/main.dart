@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'login_screen.dart';
+import 'signup_screen.dart';
+import 'home_screen.dart';
+import 'notifications_screen.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,105 +35,17 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFACD4AE)),
+        shadowColor: Color(0xFF797979),
         useMaterial3: true,
       ),
-      home: LoginScreen(),
-    );
-  }
-}
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  String username = '';
-  String password = '';
-  String errorMessage = '';
-
-  void login() {
-    setState(() {
-      if (username == 'admin' && password == '1234') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfileScreen(username: username)),
-        );
-      } else {
-        errorMessage = 'Invalid credentials';
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Login Screen')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              onChanged: (value) => username = value,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              onChanged: (value) => password = value,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: login,
-              child: Text('Login'),
-            ),
-            if (errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  errorMessage,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({required this.username, super.key});
-
-  final String username;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Profile Screen')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome, $username!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Logout'),
-            ),
-          ],
-        ),
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/home': (context) => const HomePage(username: 'admin'),
+        '/notifications': (context) => const NotificationsPage(),
+      },
     );
   }
 }
