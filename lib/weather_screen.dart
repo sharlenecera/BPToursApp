@@ -13,11 +13,15 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController();
   Future<List<Map<String, dynamic>>>? _futureSearchResults;
+  final apiKey = 'd092a571f74a5876b63f080987632294';
   
   String _latitude = '';
   String _longitude = '';
   String _errorMessage = '';
   String _cityName = '';
+  String _weatherDescription = '';
+  String _mainTemperature = '';
+
 
   Future<List<Map<String, dynamic>>> _searchLocation() async {
       //   final text = _controller.text;
@@ -32,7 +36,6 @@ class _WeatherPageState extends State<WeatherPage> {
 
     final countryCode = 'GB';
     final resultsLimit = 5;
-    final apiKey = 'd092a571f74a5876b63f080987632294';
     final apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=$city,$countryCode&limit=$resultsLimit&appid=$apiKey';
 
     try {
@@ -53,17 +56,38 @@ class _WeatherPageState extends State<WeatherPage> {
         }
       } else {
         setState(() {
-          _errorMessage = 'Error fetching data: ${response.statusCode}';
+          _errorMessage = 'Error getting data: ${response.statusCode}';
         });
         return [];
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'An error occurred: $e';
+        _errorMessage = 'Error occurred: $e';
       });
       return [];
     }
   }
+
+  Future<void> _getWeatherData() async {
+  final apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lat=$_latitude&lon=$_longitude&appid=$apiKey';
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      _mainTemperature = data['main']['temp'].round().toString();
+      _weatherDescription = data['weather'][0]['main'];
+    } else {
+      setState(() {
+        _errorMessage = 'Error getting weather data: ${response.statusCode}';
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _errorMessage = 'Error occurred: $e';
+    });
+  }
+}
 
   @override
   void initState() {
@@ -127,12 +151,13 @@ class _WeatherPageState extends State<WeatherPage> {
                     if (results.isEmpty) {
                       children = <Widget>[Center(child: Text('No results found'))];
                     }
-                    print(results);
+                    // print(results);
 
                     _latitude = results[0]['latitude'];
                     _longitude = results[0]['longitude'];
                     _cityName = results[0]['cityName'];
-
+                    _getWeatherData();
+                    
                     children = <Widget>[Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -174,9 +199,9 @@ class _WeatherPageState extends State<WeatherPage> {
                           padding: const EdgeInsets.only(left: 20.0),
                           child: Row(
                             children: [
-                              Text('5°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
+                              Text('$_mainTemperature°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
                               SizedBox(width: 10),
-                              Text('Cloudy', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
+                              Text('$_weatherDescription', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
                             ],
                           ),
                         ),
