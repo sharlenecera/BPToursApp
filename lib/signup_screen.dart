@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 import 'widgets/widgets.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -10,6 +12,7 @@ class SignUpScreen extends StatefulWidget {
 
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final storage = FlutterSecureStorage();
   String firstName = '';
   String surname = '';
   String username = '';
@@ -22,8 +25,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
     Navigator.pop(context);
   }
 
-  void signUp() {
-    print('nothing so far');
+  Future<void> signUp() async {
+    // Checks if repeat password matches password
+    if (password != repeatPassword) {
+      setState(() {
+        errorMessage = 'Passwords do not match';
+        print('password: $password');
+        print('repeat: $repeatPassword');
+      });
+      return;
+    }
+
+    final usersJSON = await storage.read(key: 'users');
+    List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
+
+    // Check if username already exists
+    if (users.any((user) => user['username'] == username)) {
+      setState(() {
+        errorMessage = 'Username already exists';
+      });
+      return;
+    }
+
+    users.add({
+      'firstName': firstName,
+      'surname': surname,
+      'username': username,
+      'password': password
+    });
+    await storage.write(key: 'users', value: json.encode(users));
+
+    // Navigate to home screen after async operations are complete
+    if (mounted) {
+      Navigator.pushNamed(context, '/home');
+    }
   }
 
   @override
@@ -90,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => password = value,
+                onChanged: (value) => repeatPassword = value,
                 decoration: InputDecoration(
                   label: Text('Repeat Password', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 import 'widgets/widgets.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,24 +12,50 @@ class LoginScreen extends StatefulWidget {
 
 
 class _LoginScreenState extends State<LoginScreen> {
-  String username = '';
-  String password = '';
-  String errorMessage = '';
+  final storage = FlutterSecureStorage();
+  String _username = '';
+  String _password = '';
+  String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    clearSecureStorage();
+  }
+
+  void clearSecureStorage() async {
+    await storage.deleteAll();
+    print('All data cleared from secure storage');
+  }
 
   void onSignUpButtonPressed() {
     print('Sign up button pressed.');
     Navigator.pushNamed(context, '/signup');
   }
 
-  void login() {
+  Future<void> login() async {
+    final usersJSON = await storage.read(key: 'users');
+    List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
+    print('users: $users');
+
     setState(() {
-      if (username == 'admin' && password == '1234') {
+      if (users.any((user) => user['username'] == _username && user['password'] == _password)) {
         Navigator.pushNamed(context, '/home');
       } else {
-        errorMessage = 'Invalid credentials';
+        _errorMessage = 'Invalid credentials';
       }
     });
   }
+
+  // void login() {
+  //   setState(() {
+  //     if (username == 'admin' && password == '1234') {
+  //       Navigator.pushNamed(context, '/home');
+  //     } else {
+  //       errorMessage = 'Invalid credentials';
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => username = value,
+                onChanged: (value) => _username = value,
                 decoration: InputDecoration(
                   label: Text('Username', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -56,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => password = value,
+                onChanged: (value) => _password = value,
                 decoration: InputDecoration(
                   label: Text('Password', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -80,11 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
             PrimaryButton(label: 'Login', onPressed: login),
-            if (errorMessage.isNotEmpty)
+            if (_errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
-                  errorMessage,
+                  _errorMessage,
                   style: TextStyle(color: Colors.red),
                 ),
               ),
