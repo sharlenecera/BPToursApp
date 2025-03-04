@@ -7,9 +7,7 @@ import 'weather_screen.dart';
 import 'profile_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({required this.username, super.key});
-
-  final String username;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePage();
