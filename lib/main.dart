@@ -6,6 +6,7 @@ import 'signup_screen.dart';
 import 'home_screen.dart';
 import 'notifications_screen.dart';
 import 'edit_profile_screen.dart';
+import 'change_password_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(username: 'admin'),
         '/notifications': (context) => const NotificationsPage(),
         '/editProfile': (context) => const EditProfilePage(),
+        '/changePassword': (context) => const ChangePasswordPage(),
       },
     );
   }

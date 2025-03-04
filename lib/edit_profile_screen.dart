@@ -211,6 +211,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             TextButton(
               onPressed: () {
                 // navigate to change password page
+                Navigator.pushNamed(context, '/changePassword');
               },
               child: Text('Change Password?', style: Theme.of(context).textTheme.labelSmall),
             ),
