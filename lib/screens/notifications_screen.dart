@@ -48,7 +48,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Notifications', style: Theme.of(context).textTheme.displayMedium),
+            Text('Notifications', style: Theme.of(context).textTheme.displayMedium?.copyWith(fontSize: 40.0)),
           ],
         ),
       ),

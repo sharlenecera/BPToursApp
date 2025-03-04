@@ -76,7 +76,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text('Change Password', style: Theme.of(context).textTheme.displayMedium),
+            Text('Change Password', style: Theme.of(context).textTheme.displayMedium?.copyWith(fontSize: 40.0)),
           ],
         ),
         automaticallyImplyLeading: false,

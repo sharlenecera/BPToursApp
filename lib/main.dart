@@ -82,8 +82,6 @@ class MyApp extends StatelessWidget {
         '/editProfile': (context) => const EditProfilePage(),
         '/changePassword': (context) => const ChangePasswordPage(),
       },
-      
-      home: LoginScreen(),
     );
   }
 }

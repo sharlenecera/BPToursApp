@@ -222,7 +222,7 @@ class _HomePage extends State<HomePage> {
                     Navigator.pushNamed(context, '/editProfile');
                   },
                 ) : Container(),
-                SizedBox(width: 130),
+                SizedBox(width: 85),
                 _selectedIndex == 2 ? NotificationButton(onPressed: () {
                   Navigator.pushNamed(context, '/notifications');
                 }) : Container(),
