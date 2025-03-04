@@ -10,8 +10,8 @@ class NotificationsPage extends StatefulWidget {
 
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  final List<NotificationBox> notifications = [];
-  final List<Map<String, String>> notificationData = [
+  final List<NotificationBox> _notifications = [];
+  final List<Map<String, String>> _notificationData = [
       {
         'message': 'You booked a tour in London for February 2nd',
         'time': '1 day ago',
@@ -23,9 +23,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
     ];
 
   void removeNotification(int index) {
-    if (index >= 0 && index < notificationData.length) {
+    if (index >= 0 && index < _notificationData.length) {
       setState(() {
-        notificationData.removeAt(index);
+        _notificationData.removeAt(index);
       });
     }
     else {
@@ -52,7 +52,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ],
         ),
       ),
-      body: notificationData.isEmpty
+      body: _notificationData.isEmpty
       ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,9 +64,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: ListView.builder(
-            itemCount: notificationData.length,
+            itemCount: _notificationData.length,
             itemBuilder: (context, index) {
-              final notification = notificationData[index];
+              final notification = _notificationData[index];
               return Padding(
                 padding: const EdgeInsets.only(bottom: 15.0),
                 child: NotificationBox(

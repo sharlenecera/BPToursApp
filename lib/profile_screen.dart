@@ -11,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   late Future<Map<String, String>> _futureUserDetails;
 
   @override
@@ -22,12 +22,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<Map<String, String>> getUserDetails() async {
     try {
-      final currentUserUsername = await storage.read(key: 'currentUser');
+      final currentUserUsername = await _storage.read(key: 'currentUser');
       if (currentUserUsername == null) {
         return {'error': 'No user is logged in'};
       }
 
-      final usersJSON = await storage.read(key: 'users');
+      final usersJSON = await _storage.read(key: 'users');
       if (usersJSON == null) {
         return {'error': 'No users found'};
       }

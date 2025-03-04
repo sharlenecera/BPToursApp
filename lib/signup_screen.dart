@@ -12,13 +12,13 @@ class SignUpScreen extends StatefulWidget {
 
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final storage = FlutterSecureStorage();
-  String firstName = '';
-  String surname = '';
-  String username = '';
-  String password = '';
-  String repeatPassword = '';
-  String errorMessage = '';
+  final _storage = FlutterSecureStorage();
+  String _firstName = '';
+  String _surname = '';
+  String _username = '';
+  String _password = '';
+  String _repeatPassword = '';
+  String _errorMessage = '';
 
   void onBackButtonPressed() {
     print('Back button pressed.');
@@ -27,40 +27,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> signUp() async {
     // Checks if repeat password matches password
-    if (password != repeatPassword) {
+    if (_password != _repeatPassword) {
       setState(() {
-        errorMessage = 'Passwords do not match';
+        _errorMessage = 'Passwords do not match';
       });
       return;
     }
 
-    final usersJSON = await storage.read(key: 'users');
+    final usersJSON = await _storage.read(key: 'users');
     List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
 
     // Check if username already exists
-    if (users.any((user) => user['username'] == username)) {
+    if (users.any((user) => user['username'] == _username)) {
       setState(() {
-        errorMessage = 'Username already exists';
+        _errorMessage = 'Username already exists';
       });
       return;
     }
 
     users.add({
-      'firstName': firstName,
-      'surname': surname,
-      'username': username,
-      'password': password,
+      'firstName': _firstName,
+      'surname': _surname,
+      'username': _username,
+      'password': _password,
       'birthday': '',
       'homeCity': '',
       'IdsOfToursBooked': [],
     });
-    await storage.write(key: 'users', value: json.encode(users));
-    await storage.write(key: 'currentUser', value: username);
+    await _storage.write(key: 'users', value: json.encode(users));
+    await _storage.write(key: 'currentUser', value: _username);
     print({
-      'firstName': firstName,
-      'surname': surname,
-      'username': username,
-      'password': password
+      'firstName': _firstName,
+      'surname': _surname,
+      'username': _username,
+      'password': _password
     });
 
     // Navigate to home screen after async operations are complete
@@ -92,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => firstName = value,
+                onChanged: (value) => _firstName = value,
                 decoration: InputDecoration(
                   label: Text('First Name', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -102,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => surname = value,
+                onChanged: (value) => _surname = value,
                 decoration: InputDecoration(
                   label: Text('Surname', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -112,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => username = value,
+                onChanged: (value) => _username = value,
                 decoration: InputDecoration(
                   label: Text('Username', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -122,7 +122,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => password = value,
+                onChanged: (value) => _password = value,
                 decoration: InputDecoration(
                   label: Text('Password', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -133,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => repeatPassword = value,
+                onChanged: (value) => _repeatPassword = value,
                 decoration: InputDecoration(
                   label: Text('Repeat Password', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -142,11 +142,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             PrimaryButton(label: 'Sign Up', onPressed: signUp),
-            if (errorMessage.isNotEmpty)
+            if (_errorMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
-                  errorMessage,
+                  _errorMessage,
                   style: TextStyle(color: Colors.red),
                 ),
               ),
