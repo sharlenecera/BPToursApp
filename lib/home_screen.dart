@@ -32,13 +32,24 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> getTours() async {
-  final toursJSON = await storage.read(key: 'tours');
-  if (toursJSON != null) {
-    return List<Map<String, dynamic>>.from(json.decode(toursJSON));
-  } else {
-    return [];
+    final toursJSON = await storage.read(key: 'tours');
+    if (toursJSON != null) {
+      return List<Map<String, dynamic>>.from(json.decode(toursJSON));
+    } else {
+      return [];
+    }
   }
-}
+
+  Future<List<Map<String, dynamic>>> getBookedTours() async {
+    final currentUser = await storage.read(key: 'currentUser');
+    final toursJSON = await storage.read(key: 'tours');
+    if (toursJSON != null && currentUser != null) {
+      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+      return tours.where((tour) => tour['usersBooked'].contains(currentUser)).toList();
+    } else {
+      return [];
+    }
+  }
 
   void onBookButtonPressed() {
     showDialog(
@@ -146,38 +157,44 @@ class _HomePage extends State<HomePage> {
                       },
                     ),
                     // Booked tab below -----------------------------------------------------------
-                    Column(
-                      children: [
-                        Card(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                title: Text('London'),
-                                subtitle: Text('February 2nd, 2025'),
-                              ),
-                              Text('Includes Buckingham Palace, Piccadilly Circus', textAlign: TextAlign.left,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Text('3/10 Booked'),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: TextButton(
-                                      onPressed: onBookButtonPressed,
-                                      child: SecondaryButton(label: 'Cancel', onPressed: onCancelButtonPressed),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ]
-                    ),
+                    FutureBuilder<List<Map<String, dynamic>>>(
+                      future: getBookedTours(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (snapshot.hasData) {
+                          final bookedTours = snapshot.data!;
+                          if (bookedTours.isEmpty) {
+                            return Center(child: Text('No booked tours.'));
+                          } else {
+                            return ListView.builder(
+                              itemCount: bookedTours.length,
+                              itemBuilder: (context, index) {
+                                final tour = bookedTours[index];
+                                final cityName = tour['cityName'];
+                                final date = tour['date'];
+                                final description = tour['description'];
+                                final maxCapacity = tour['maxCapacity'];
+                                final numberOfUsersBooked = tour['usersBooked'].length.toString();
+
+                                return TourCard(
+                                  cityName: cityName,
+                                  date: date,
+                                  description: description,
+                                  maxCapacity: maxCapacity,
+                                  numberOfUsersBooked: numberOfUsersBooked,
+                                  onPressedButton: onCancelButtonPressed,
+                                );
+                              },
+                            );
+                          }
+                        } else {
+                          return Center(child: Text('No data available'));
+                        }
+                      },
+                    )
                   ],
                 ),
             ) : _selectedIndex == 1

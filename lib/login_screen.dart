@@ -34,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
         'password': '1234',
         'birthday': '01/01/2000',
         'homeCity': 'Nottingham',
+        'IdsOfToursBooked': [1],
       },
     ]));
 
@@ -45,6 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
         'date': 'February 2nd, 2025',
         'description': 'Includes London Eye, London Bridge and Big Ben.',
         'maxCapacity': '10',
+        'usersBooked': ['admin'],
+      },
+      {
+        'ID': '2',
+        'cityName': 'Paris',
+        'date': 'March 3rd, 2025',
+        'description': 'Includes Eiffel Tower, Louvre Museum and Notre-Dame Cathedral.',
+        'maxCapacity': '12',
         'usersBooked': [],
       },
     ]));
