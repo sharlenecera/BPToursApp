@@ -132,8 +132,55 @@ class _HomePage extends State<HomePage> {
     );
   }
 
-  void onCancelButtonPressed() {
-    print('Cancel button pressed.');
+  Future<void> cancelBooking(String tourId) async {
+    final toursJSON = await storage.read(key: 'tours');
+    final usersJSON = await storage.read(key: 'users');
+
+    if (toursJSON != null && usersJSON != null) {
+      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+      List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+      final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
+      final userIndex = users.indexWhere((user) => user['username'] == _username);
+      if (tourIndex > -1 && userIndex > -1) {
+        if (tours[tourIndex]['usersBooked'].contains(_username)) {
+          tours[tourIndex]['usersBooked'].remove(_username);
+          users[userIndex]['IdsOfToursBooked'].remove(tourId);
+          await storage.write(key: 'tours', value: json.encode(tours));
+          await storage.write(key: 'users', value: json.encode(users));
+          setState(() {});
+        } else {
+          showError('You have not booked this tour.');
+        }
+      }
+    }
+  }
+
+  void onCancelButtonPressed(String tourId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Cancellation'),
+          content: Text('Are you sure you want to cancel this booking?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await cancelBooking(tourId);
+                Navigator.of(context).pop(); // Close the dialog
+                print('Booking cancelled.');
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -186,7 +233,7 @@ class _HomePage extends State<HomePage> {
                               itemCount: tours.length,
                               itemBuilder: (context, index) {
                                 final tour = tours[index];
-                                final id = tour['ID'];
+                                final tourID = tour['ID'];
                                 final cityName = tour['cityName'];
                                 final date = tour['date'];
                                 final description = tour['description'];
@@ -201,7 +248,7 @@ class _HomePage extends State<HomePage> {
                                   numberOfUsersBooked: numberOfUsersBooked,
                                   buttonText: 'Book',
                                   onPressedButton: () {
-                                    onBookButtonPressed(id);
+                                    onBookButtonPressed(tourID);
                                   },
                                 );
                               },
@@ -229,6 +276,7 @@ class _HomePage extends State<HomePage> {
                               itemCount: bookedTours.length,
                               itemBuilder: (context, index) {
                                 final tour = bookedTours[index];
+                                final tourID = tour['ID'];
                                 final cityName = tour['cityName'];
                                 final date = tour['date'];
                                 final description = tour['description'];
@@ -242,7 +290,9 @@ class _HomePage extends State<HomePage> {
                                   maxCapacity: maxCapacity,
                                   numberOfUsersBooked: numberOfUsersBooked,
                                   buttonText: 'Cancel',
-                                  onPressedButton: onCancelButtonPressed,
+                                  onPressedButton: () {
+                                    onCancelButtonPressed(tourID);
+                                  },
                                 );
                               },
                             );
