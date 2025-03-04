@@ -26,46 +26,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> signUp() async {
-    // Checks if repeat password matches password
-    if (_password != _repeatPassword) {
-      setState(() {
-        _errorMessage = 'Passwords do not match';
+    try {
+      // Checks if repeat password matches password
+      if (_password != _repeatPassword) {
+        setState(() {
+          _errorMessage = 'Passwords do not match';
+        });
+        return;
+      }
+
+      final usersJSON = await _storage.read(key: 'users');
+      List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
+
+      // Check if username already exists
+      if (users.any((user) => user['username'] == _username)) {
+        setState(() {
+          _errorMessage = 'Username already exists';
+        });
+        return;
+      }
+
+      users.add({
+        'firstName': _firstName,
+        'surname': _surname,
+        'username': _username,
+        'password': _password,
+        'birthday': '',
+        'homeCity': '',
+        'IdsOfToursBooked': [],
       });
-      return;
-    }
-
-    final usersJSON = await _storage.read(key: 'users');
-    List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
-
-    // Check if username already exists
-    if (users.any((user) => user['username'] == _username)) {
-      setState(() {
-        _errorMessage = 'Username already exists';
+      await _storage.write(key: 'users', value: json.encode(users));
+      await _storage.write(key: 'currentUser', value: _username);
+      print({
+        'firstName': _firstName,
+        'surname': _surname,
+        'username': _username,
+        'password': _password
       });
-      return;
-    }
 
-    users.add({
-      'firstName': _firstName,
-      'surname': _surname,
-      'username': _username,
-      'password': _password,
-      'birthday': '',
-      'homeCity': '',
-      'IdsOfToursBooked': [],
-    });
-    await _storage.write(key: 'users', value: json.encode(users));
-    await _storage.write(key: 'currentUser', value: _username);
-    print({
-      'firstName': _firstName,
-      'surname': _surname,
-      'username': _username,
-      'password': _password
-    });
-
-    // Navigate to home screen after async operations are complete
-    if (mounted) {
-      Navigator.pushNamed(context, '/home');
+      // Navigate to home screen after async operations are complete
+      if (mounted) {
+        Navigator.pushNamed(context, '/home');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred during sign up: $e';
+      });
     }
   }
 

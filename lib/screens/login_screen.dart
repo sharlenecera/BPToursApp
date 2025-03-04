@@ -25,44 +25,56 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void initialiseStorage() async {
-    // Storing an admin user
-    await _storage.write(key: 'users', value: json.encode([
-      {
-        'firstName': 'John',
-        'surname': 'Doe',
-        'username': 'admin',
-        'password': '1234',
-        'birthday': '01/01/2000',
-        'homeCity': 'Nottingham',
-        'IdsOfToursBooked': [1],
-      },
-    ]));
+    try {
+      // Storing an admin user
+      await _storage.write(key: 'users', value: json.encode([
+        {
+          'firstName': 'John',
+          'surname': 'Doe',
+          'username': 'admin',
+          'password': '1234',
+          'birthday': '01/01/2000',
+          'homeCity': 'Nottingham',
+          'IdsOfToursBooked': [1],
+        },
+      ]));
 
-    // Initialising tours list
-    await _storage.write(key: 'tours', value: json.encode([
-      {
-        'ID': '1',
-        'cityName': 'London',
-        'date': 'February 2nd, 2025',
-        'description': 'Includes London Eye, London Bridge and Big Ben.',
-        'maxCapacity': '10',
-        'usersBooked': ['admin'],
-      },
-      {
-        'ID': '2',
-        'cityName': 'Paris',
-        'date': 'March 3rd, 2025',
-        'description': 'Includes Eiffel Tower, Louvre Museum and Notre-Dame Cathedral.',
-        'maxCapacity': '12',
-        'usersBooked': [],
-      },
-    ]));
-    print('Storage initialised');
+      // Initialising tours list
+      await _storage.write(key: 'tours', value: json.encode([
+        {
+          'ID': '1',
+          'cityName': 'London',
+          'date': 'February 2nd, 2025',
+          'description': 'Includes London Eye, London Bridge and Big Ben.',
+          'maxCapacity': '10',
+          'usersBooked': ['admin'],
+        },
+        {
+          'ID': '2',
+          'cityName': 'Paris',
+          'date': 'March 3rd, 2025',
+          'description': 'Includes Eiffel Tower, Louvre Museum and Notre-Dame Cathedral.',
+          'maxCapacity': '12',
+          'usersBooked': [],
+        },
+      ]));
+      print('Storage initialised');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred while initializing storage: $e';
+      });
+    }
   }
 
   void clearSecureStorage() async {
-    await _storage.deleteAll();
-    print('All data cleared from secure storage');
+    try {
+      await _storage.deleteAll();
+      print('All data cleared from secure storage');
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred while clearing secure storage: $e';
+      });
+    }
   }
 
   void onSignUpButtonPressed() {
@@ -71,25 +83,31 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    final usersJSON = await _storage.read(key: 'users');
-    List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
-    print('users: $users');
+    try {
+      final usersJSON = await _storage.read(key: 'users');
+      List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
+      print('users: $users');
 
-    final user = users.firstWhere(
-      (user) => user['username'] == _username && user['password'] == _password,
-      orElse: () => {},
-    );
+      final user = users.firstWhere(
+        (user) => user['username'] == _username && user['password'] == _password,
+        orElse: () => {},
+      );
 
-    if (user.isNotEmpty) {
-      // Store the logged-in username
-      await _storage.write(key: 'currentUser', value: _username);
+      if (user.isNotEmpty) {
+        // Store the logged-in username
+        await _storage.write(key: 'currentUser', value: _username);
 
-      if (mounted) {
-        Navigator.pushNamed(context, '/home');
+        if (mounted) {
+          Navigator.pushNamed(context, '/home');
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Invalid credentials';
+        });
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _errorMessage = 'Invalid credentials';
+        _errorMessage = 'An error occurred during login: $e';
       });
     }
   }

@@ -27,8 +27,6 @@ class _WeatherPageState extends State<WeatherPage> {
 
 
   Future<List<Map<String, dynamic>>> _searchLocation() async {
-      //   final text = _controller.text;
-      // print('Searching for $text (${text.characters.length})');
     String city = _controller.text;
     if (city.isEmpty) {
       setState(() {

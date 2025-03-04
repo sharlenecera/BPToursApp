@@ -19,44 +19,50 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   String _repeatNewPassword = '';
 
   void changePassword() async {
-    final currentUser = await _storage.read(key: 'currentUser');
-    if (currentUser != null) {
-      final usersJSON = await _storage.read(key: 'users');
-      if (usersJSON != null) {
-        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
-        final userIndex = users.indexWhere((user) => user['username'] == currentUser);
-        if (userIndex > -1) {
-          final user = users[userIndex];
-          if (user['password'] == _oldPassword) {
-            if (_newPassword == _repeatNewPassword) {
-              users[userIndex]['password'] = _newPassword;
-              await _storage.write(key: 'users', value: json.encode(users));
-              if (mounted) {
-                Navigator.pop(context, true); // Return true to indicate success
+    try {
+      final currentUser = await _storage.read(key: 'currentUser');
+      if (currentUser != null) {
+        final usersJSON = await _storage.read(key: 'users');
+        if (usersJSON != null) {
+          List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+          final userIndex = users.indexWhere((user) => user['username'] == currentUser);
+          if (userIndex > -1) {
+            final user = users[userIndex];
+            if (user['password'] == _oldPassword) {
+              if (_newPassword == _repeatNewPassword) {
+                users[userIndex]['password'] = _newPassword;
+                await _storage.write(key: 'users', value: json.encode(users));
+                if (mounted) {
+                  Navigator.pop(context, true); // Return true to indicate success
+                }
+              } else {
+                setState(() {
+                  _errorMessage = 'New passwords do not match.';
+                });
               }
             } else {
               setState(() {
-                _errorMessage = 'New passwords do not match.';
+                _errorMessage = 'Old password is incorrect.';
               });
             }
           } else {
             setState(() {
-              _errorMessage = 'Old password is incorrect.';
+              _errorMessage = 'User not found.';
             });
           }
         } else {
           setState(() {
-            _errorMessage = 'User not found.';
+            _errorMessage = 'No users found.';
           });
         }
       } else {
         setState(() {
-          _errorMessage = 'No users found.';
+          _errorMessage = 'No current user found.';
         });
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _errorMessage = 'No current user found.';
+        _errorMessage = 'An error occurred while changing the password: $e';
       });
     }
   }

@@ -37,56 +37,80 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void loadProfile() async {
-    final currentUser = await _storage.read(key: 'currentUser');
-    if (currentUser != null) {
-      final usersJSON = await _storage.read(key: 'users');
-      if (usersJSON != null) {
-        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
-        final user = users.firstWhere((user) => user['username'] == currentUser, orElse: () => {});
-        if (user.isNotEmpty) {
-          setState(() {
-            _firstNameController.text = user['firstName'] ?? '';
-            _surnameController.text = user['surname'] ?? '';
-            _usernameController.text = user['username'] ?? '';
-            _birthdayController.text = user['birthday'] ?? '';
-            _homeCityController.text = user['homeCity'] ?? '';
-          });
-        }
-      }
-    }
-  }
-
-  void updateProfile() async {
-    final currentUser = await _storage.read(key: 'currentUser');
-    if (currentUser != null) {
-      final usersJSON = await _storage.read(key: 'users');
-      if (usersJSON != null) {
-        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
-        final userIndex = users.indexWhere((user) => user['username'] == currentUser);
-        if (userIndex > -1) {
-          users[userIndex]['firstName'] = _firstNameController.text;
-          users[userIndex]['surname'] = _surnameController.text;
-          users[userIndex]['username'] = _usernameController.text;
-          users[userIndex]['birthday'] = _birthdayController.text;
-          users[userIndex]['homeCity'] = _homeCityController.text;
-
-          await _storage.write(key: 'users', value: json.encode(users));
-          if (mounted) {
-            Navigator.pop(context);
+    try {
+      final currentUser = await _storage.read(key: 'currentUser');
+      if (currentUser != null) {
+        final usersJSON = await _storage.read(key: 'users');
+        if (usersJSON != null) {
+          List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+          final user = users.firstWhere((user) => user['username'] == currentUser, orElse: () => {});
+          if (user.isNotEmpty) {
+            setState(() {
+              _firstNameController.text = user['firstName'] ?? '';
+              _surnameController.text = user['surname'] ?? '';
+              _usernameController.text = user['username'] ?? '';
+              _birthdayController.text = user['birthday'] ?? '';
+              _homeCityController.text = user['homeCity'] ?? '';
+            });
+          } else {
+            setState(() {
+              _errorMessage = 'User not found.';
+            });
           }
         } else {
           setState(() {
-            _errorMessage = 'User not found.';
+            _errorMessage = 'No users found.';
           });
         }
       } else {
         setState(() {
-          _errorMessage = 'No users found.';
+          _errorMessage = 'No current user found.';
         });
       }
-    } else {
+    } catch (e) {
       setState(() {
-        _errorMessage = 'No current user found.';
+        _errorMessage = 'An error occurred while loading the profile: $e';
+      });
+    }
+  }
+
+  void updateProfile() async {
+    try {
+      final currentUser = await _storage.read(key: 'currentUser');
+      if (currentUser != null) {
+        final usersJSON = await _storage.read(key: 'users');
+        if (usersJSON != null) {
+          List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+          final userIndex = users.indexWhere((user) => user['username'] == currentUser);
+          if (userIndex > -1) {
+            users[userIndex]['firstName'] = _firstNameController.text;
+            users[userIndex]['surname'] = _surnameController.text;
+            users[userIndex]['username'] = _usernameController.text;
+            users[userIndex]['birthday'] = _birthdayController.text;
+            users[userIndex]['homeCity'] = _homeCityController.text;
+
+            await _storage.write(key: 'users', value: json.encode(users));
+            if (mounted) {
+              Navigator.pop(context, true); // Return true to indicate success
+            }
+          } else {
+            setState(() {
+              _errorMessage = 'User not found.';
+            });
+          }
+        } else {
+          setState(() {
+            _errorMessage = 'No users found.';
+          });
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'No current user found.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'An error occurred while updating the profile: $e';
       });
     }
   }

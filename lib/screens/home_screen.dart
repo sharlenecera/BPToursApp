@@ -31,10 +31,14 @@ class _HomePage extends State<HomePage> {
   }
 
   void getCurrentUser() async {
-    final currentUser = await _storage.read(key: 'currentUser');
-    setState(() {
-      _username = currentUser ?? '';
-    });
+    try {
+      final currentUser = await _storage.read(key: 'currentUser');
+      setState(() {
+        _username = currentUser ?? '';
+      });
+    } catch (e) {
+      showError('An error occurred while fetching the current user: $e');
+    }
   }
 
   void onNavOptionPressed(int index) {
@@ -44,20 +48,30 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> getTours() async {
-    final toursJSON = await _storage.read(key: 'tours');
-    if (toursJSON != null) {
-      return List<Map<String, dynamic>>.from(json.decode(toursJSON));
-    } else {
+    try {
+      final toursJSON = await _storage.read(key: 'tours');
+      if (toursJSON != null) {
+        return List<Map<String, dynamic>>.from(json.decode(toursJSON));
+      } else {
+        return [];
+      }
+    } catch (e) {
+      showError('An error occurred while fetching tours: $e');
       return [];
     }
   }
 
   Future<List<Map<String, dynamic>>> getBookedTours() async {
-    final toursJSON = await _storage.read(key: 'tours');
-    if (toursJSON != null) {
-      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
-      return tours.where((tour) => tour['usersBooked'].contains(_username)).toList();
-    } else {
+    try {
+      final toursJSON = await _storage.read(key: 'tours');
+      if (toursJSON != null) {
+        List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+        return tours.where((tour) => tour['usersBooked'].contains(_username)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      showError('An error occurred while fetching booked tours: $e');
       return [];
     }
   }
@@ -80,25 +94,29 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<void> bookTour(String tourId) async {
-    final toursJSON = await _storage.read(key: 'tours');
-    final usersJSON = await _storage.read(key: 'users');
+    try {
+      final toursJSON = await _storage.read(key: 'tours');
+      final usersJSON = await _storage.read(key: 'users');
 
-    if (toursJSON != null && usersJSON != null) {
-      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
-      List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
-      final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
-      final userIndex = users.indexWhere((user) => user['username'] == _username);
-      if (tourIndex > -1 && userIndex > -1) {
-        if (!tours[tourIndex]['usersBooked'].contains(_username)) {
-          tours[tourIndex]['usersBooked'].add(_username);
-          users[userIndex]['IdsOfToursBooked'].add(tourId);
-          await _storage.write(key: 'tours', value: json.encode(tours));
-          await _storage.write(key: 'users', value: json.encode(users));
-          setState(() {});
-        } else {
-          showError('You have already booked this tour.');
+      if (toursJSON != null && usersJSON != null) {
+        List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+        final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
+        final userIndex = users.indexWhere((user) => user['username'] == _username);
+        if (tourIndex > -1 && userIndex > -1) {
+          if (!tours[tourIndex]['usersBooked'].contains(_username)) {
+            tours[tourIndex]['usersBooked'].add(_username);
+            users[userIndex]['IdsOfToursBooked'].add(tourId);
+            await _storage.write(key: 'tours', value: json.encode(tours));
+            await _storage.write(key: 'users', value: json.encode(users));
+            setState(() {});
+          } else {
+            showError('You have already booked this tour.');
+          }
         }
       }
+    } catch (e) {
+      showError('An error occurred while booking the tour: $e');
     }
   }
 
@@ -131,25 +149,29 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<void> cancelBooking(String tourId) async {
-    final toursJSON = await _storage.read(key: 'tours');
-    final usersJSON = await _storage.read(key: 'users');
+    try {
+      final toursJSON = await _storage.read(key: 'tours');
+      final usersJSON = await _storage.read(key: 'users');
 
-    if (toursJSON != null && usersJSON != null) {
-      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
-      List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
-      final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
-      final userIndex = users.indexWhere((user) => user['username'] == _username);
-      if (tourIndex > -1 && userIndex > -1) {
-        if (tours[tourIndex]['usersBooked'].contains(_username)) {
-          tours[tourIndex]['usersBooked'].remove(_username);
-          users[userIndex]['IdsOfToursBooked'].remove(tourId);
-          await _storage.write(key: 'tours', value: json.encode(tours));
-          await _storage.write(key: 'users', value: json.encode(users));
-          setState(() {});
-        } else {
-          showError('You have not booked this tour.');
+      if (toursJSON != null && usersJSON != null) {
+        List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+        final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
+        final userIndex = users.indexWhere((user) => user['username'] == _username);
+        if (tourIndex > -1 && userIndex > -1) {
+          if (tours[tourIndex]['usersBooked'].contains(_username)) {
+            tours[tourIndex]['usersBooked'].remove(_username);
+            users[userIndex]['IdsOfToursBooked'].remove(tourId);
+            await _storage.write(key: 'tours', value: json.encode(tours));
+            await _storage.write(key: 'users', value: json.encode(users));
+            setState(() {});
+          } else {
+            showError('You have not booked this tour.');
+          }
         }
       }
+    } catch (e) {
+      showError('An error occurred while canceling the booking: $e');
     }
   }
 
