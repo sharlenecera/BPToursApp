@@ -12,10 +12,54 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final storage = FlutterSecureStorage();
   String _errorMessage = '';
   String _oldPassword = '';
   String _newPassword = '';
   String _repeatNewPassword = '';
+
+  void changePassword() async {
+    final currentUser = await storage.read(key: 'currentUser');
+    if (currentUser != null) {
+      final usersJSON = await storage.read(key: 'users');
+      if (usersJSON != null) {
+        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+        final userIndex = users.indexWhere((user) => user['username'] == currentUser);
+        if (userIndex > -1) {
+          final user = users[userIndex];
+          if (user['password'] == _oldPassword) {
+            if (_newPassword == _repeatNewPassword) {
+              users[userIndex]['password'] = _newPassword;
+              await storage.write(key: 'users', value: json.encode(users));
+              if (mounted) {
+                Navigator.pop(context, true); // Return true to indicate success
+              }
+            } else {
+              setState(() {
+                _errorMessage = 'New passwords do not match.';
+              });
+            }
+          } else {
+            setState(() {
+              _errorMessage = 'Old password is incorrect.';
+            });
+          }
+        } else {
+          setState(() {
+            _errorMessage = 'User not found.';
+          });
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'No users found.';
+        });
+      }
+    } else {
+      setState(() {
+        _errorMessage = 'No current user found.';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +148,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                PrimaryButton(label: 'Submit', onPressed: (){}),
+                PrimaryButton(label: 'Submit', onPressed: changePassword),
                 SecondaryButton(label: 'Cancel', onPressed: () => Navigator.pop(context)),
               ],
             )
