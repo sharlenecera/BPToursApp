@@ -29,7 +29,10 @@ class TourCard extends StatelessWidget {
             title: Text(cityName),
             subtitle: Text(date),
           ),
-          Text(description, textAlign: TextAlign.left,),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(description, textAlign: TextAlign.left,),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
