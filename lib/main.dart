@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/change_password_screen.dart';
+
 final mainColour = const Color(0xFF326335);
 final backgroundColour = const Color(0xFFACD4AE);
 
@@ -51,13 +58,6 @@ final ThemeData appTheme = ThemeData(
   ),
     useMaterial3: true,
 );
-
-import 'screens/login_screen.dart';
-import 'screens/signup_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/notifications_screen.dart';
-import 'screens/edit_profile_screen.dart';
-import 'screens/change_password_screen.dart';
 
 void main() {
   runApp(const MyApp());
