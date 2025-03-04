@@ -7,6 +7,7 @@ class TourCard extends StatelessWidget {
   final String description;
   final String maxCapacity;
   final String numberOfUsersBooked;
+  final String buttonText;
   final VoidCallback onPressedButton;
 
   const TourCard({
@@ -16,6 +17,7 @@ class TourCard extends StatelessWidget {
     required this.description,
     required this.maxCapacity,
     required this.numberOfUsersBooked,
+    required this.buttonText,
     required this.onPressedButton,
   }) : super(key: key);
 
@@ -44,7 +46,7 @@ class TourCard extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 child: TextButton(
                   onPressed: onPressedButton,
-                  child: PrimaryButton(label: 'Book', onPressed: onPressedButton),
+                  child: PrimaryButton(label: buttonText, onPressed: onPressedButton),
                 ),
               )
             ],
