@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-import 'widgets/widgets.dart';
-import 'weather_screen.dart';
-import 'profile_screen.dart';
+import '../widgets/widgets.dart';
+import '../weather_screen.dart';
+import '../profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePage extends State<HomePage> {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   String _username = '';
   int _selectedIndex = 0;
   static const List<String> navbarOptions = [
@@ -31,7 +31,7 @@ class _HomePage extends State<HomePage> {
   }
 
   void getCurrentUser() async {
-    final currentUser = await storage.read(key: 'currentUser');
+    final currentUser = await _storage.read(key: 'currentUser');
     setState(() {
       _username = currentUser ?? '';
     });
@@ -44,7 +44,7 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> getTours() async {
-    final toursJSON = await storage.read(key: 'tours');
+    final toursJSON = await _storage.read(key: 'tours');
     if (toursJSON != null) {
       return List<Map<String, dynamic>>.from(json.decode(toursJSON));
     } else {
@@ -53,7 +53,7 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> getBookedTours() async {
-    final toursJSON = await storage.read(key: 'tours');
+    final toursJSON = await _storage.read(key: 'tours');
     if (toursJSON != null) {
       List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
       return tours.where((tour) => tour['usersBooked'].contains(_username)).toList();
@@ -80,8 +80,8 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<void> bookTour(String tourId) async {
-    final toursJSON = await storage.read(key: 'tours');
-    final usersJSON = await storage.read(key: 'users');
+    final toursJSON = await _storage.read(key: 'tours');
+    final usersJSON = await _storage.read(key: 'users');
 
     if (toursJSON != null && usersJSON != null) {
       List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
@@ -92,8 +92,8 @@ class _HomePage extends State<HomePage> {
         if (!tours[tourIndex]['usersBooked'].contains(_username)) {
           tours[tourIndex]['usersBooked'].add(_username);
           users[userIndex]['IdsOfToursBooked'].add(tourId);
-          await storage.write(key: 'tours', value: json.encode(tours));
-          await storage.write(key: 'users', value: json.encode(users));
+          await _storage.write(key: 'tours', value: json.encode(tours));
+          await _storage.write(key: 'users', value: json.encode(users));
           setState(() {});
         } else {
           showError('You have already booked this tour.');
@@ -131,8 +131,8 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<void> cancelBooking(String tourId) async {
-    final toursJSON = await storage.read(key: 'tours');
-    final usersJSON = await storage.read(key: 'users');
+    final toursJSON = await _storage.read(key: 'tours');
+    final usersJSON = await _storage.read(key: 'users');
 
     if (toursJSON != null && usersJSON != null) {
       List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
@@ -143,8 +143,8 @@ class _HomePage extends State<HomePage> {
         if (tours[tourIndex]['usersBooked'].contains(_username)) {
           tours[tourIndex]['usersBooked'].remove(_username);
           users[userIndex]['IdsOfToursBooked'].remove(tourId);
-          await storage.write(key: 'tours', value: json.encode(tours));
-          await storage.write(key: 'users', value: json.encode(users));
+          await _storage.write(key: 'tours', value: json.encode(tours));
+          await _storage.write(key: 'users', value: json.encode(users));
           setState(() {});
         } else {
           showError('You have not booked this tour.');

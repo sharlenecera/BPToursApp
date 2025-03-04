@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
-import 'widgets/widgets.dart';
+import '../widgets/widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 
 class _LoginScreenState extends State<LoginScreen> {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   String _username = '';
   String _password = '';
   String _errorMessage = '';
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void initialiseStorage() async {
     // Storing an admin user
-    await storage.write(key: 'users', value: json.encode([
+    await _storage.write(key: 'users', value: json.encode([
       {
         'firstName': 'John',
         'surname': 'Doe',
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ]));
 
     // Initialising tours list
-    await storage.write(key: 'tours', value: json.encode([
+    await _storage.write(key: 'tours', value: json.encode([
       {
         'ID': '1',
         'cityName': 'London',
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void clearSecureStorage() async {
-    await storage.deleteAll();
+    await _storage.deleteAll();
     print('All data cleared from secure storage');
   }
 
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    final usersJSON = await storage.read(key: 'users');
+    final usersJSON = await _storage.read(key: 'users');
     List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
     print('users: $users');
 
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user.isNotEmpty) {
       // Store the logged-in username
-      await storage.write(key: 'currentUser', value: _username);
+      await _storage.write(key: 'currentUser', value: _username);
 
       if (mounted) {
         Navigator.pushNamed(context, '/home');

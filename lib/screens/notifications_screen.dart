@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/widgets.dart';
+import '../widgets/widgets.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -10,7 +10,7 @@ class NotificationsPage extends StatefulWidget {
 
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  final List<NotificationBox> _notifications = [];
+  // final List<NotificationBox> _notifications = [];
   final List<Map<String, String>> _notificationData = [
       {
         'message': 'You booked a tour in London for February 2nd',

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-import 'widgets/widgets.dart';
+import '../widgets/widgets.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -12,16 +12,16 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   String _errorMessage = '';
   String _oldPassword = '';
   String _newPassword = '';
   String _repeatNewPassword = '';
 
   void changePassword() async {
-    final currentUser = await storage.read(key: 'currentUser');
+    final currentUser = await _storage.read(key: 'currentUser');
     if (currentUser != null) {
-      final usersJSON = await storage.read(key: 'users');
+      final usersJSON = await _storage.read(key: 'users');
       if (usersJSON != null) {
         List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
         final userIndex = users.indexWhere((user) => user['username'] == currentUser);
@@ -30,7 +30,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           if (user['password'] == _oldPassword) {
             if (_newPassword == _repeatNewPassword) {
               users[userIndex]['password'] = _newPassword;
-              await storage.write(key: 'users', value: json.encode(users));
+              await _storage.write(key: 'users', value: json.encode(users));
               if (mounted) {
                 Navigator.pop(context, true); // Return true to indicate success
               }

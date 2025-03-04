@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'login_screen.dart';
-import 'signup_screen.dart';
-import 'home_screen.dart';
-import 'notifications_screen.dart';
-import 'edit_profile_screen.dart';
-import 'change_password_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/notifications_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/change_password_screen.dart';
 
 void main() {
   runApp(const MyApp());

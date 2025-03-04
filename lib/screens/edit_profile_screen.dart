@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-import 'widgets/widgets.dart';
+import '../widgets/widgets.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -12,7 +12,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -37,9 +37,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void loadProfile() async {
-    final currentUser = await storage.read(key: 'currentUser');
+    final currentUser = await _storage.read(key: 'currentUser');
     if (currentUser != null) {
-      final usersJSON = await storage.read(key: 'users');
+      final usersJSON = await _storage.read(key: 'users');
       if (usersJSON != null) {
         List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
         final user = users.firstWhere((user) => user['username'] == currentUser, orElse: () => {});
@@ -57,9 +57,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void updateProfile() async {
-    final currentUser = await storage.read(key: 'currentUser');
+    final currentUser = await _storage.read(key: 'currentUser');
     if (currentUser != null) {
-      final usersJSON = await storage.read(key: 'users');
+      final usersJSON = await _storage.read(key: 'users');
       if (usersJSON != null) {
         List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
         final userIndex = users.indexWhere((user) => user['username'] == currentUser);
@@ -70,7 +70,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           users[userIndex]['birthday'] = _birthdayController.text;
           users[userIndex]['homeCity'] = _homeCityController.text;
 
-          await storage.write(key: 'users', value: json.encode(users));
+          await _storage.write(key: 'users', value: json.encode(users));
           if (mounted) {
             Navigator.pop(context);
           }
