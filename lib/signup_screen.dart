@@ -52,6 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       'password': password,
       'birthday': '',
       'homeCity': '',
+      'toursBooked': [],
     });
     await storage.write(key: 'users', value: json.encode(users));
     await storage.write(key: 'currentUser', value: username);

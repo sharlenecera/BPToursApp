@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void initialiseStorage() async {
+    // Storing an admin user
     await storage.write(key: 'users', value: json.encode([
       {
         'firstName': 'John',
@@ -33,6 +34,18 @@ class _LoginScreenState extends State<LoginScreen> {
         'password': '1234',
         'birthday': '01/01/2000',
         'homeCity': 'Nottingham',
+      },
+    ]));
+
+    // Initialising tours list
+    await storage.write(key: 'tours', value: json.encode([
+      {
+        'ID': '1',
+        'cityName': 'London',
+        'date': 'February 2nd, 2025',
+        'description': 'Includes London Eye, London Bridge and Big Ben.',
+        'maxCapacity': '10',
+        'usersBooked': [],
       },
     ]));
     print('Storage initialised');
