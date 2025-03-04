@@ -1,3 +1,4 @@
+import 'package:bp_tours_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
@@ -93,6 +94,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text('Home City', style: Theme.of(context).textTheme.headlineSmall),
                       Text(homeCity, style: Theme.of(context).textTheme.bodyLarge),
                     ],
+                    SizedBox(height: 20),
+                    PrimaryButton(label: 'Refresh to see changes', onPressed: (){
+                      setState(() {
+                        _futureUserDetails = getUserDetails();
+                      });
+                    }),
                   ],
                 ),
               ),
