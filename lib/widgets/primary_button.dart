@@ -14,7 +14,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(Theme.of(context).primaryColor),
+        backgroundColor: WidgetStateProperty.all(Color(0xFF326335)),
         // padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 16)),
         shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),

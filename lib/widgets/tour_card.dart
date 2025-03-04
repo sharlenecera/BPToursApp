@@ -1,3 +1,4 @@
+import 'package:bp_tours_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'primary_button.dart';
 
@@ -46,7 +47,9 @@ class TourCard extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 child: TextButton(
                   onPressed: onPressedButton,
-                  child: PrimaryButton(label: buttonText, onPressed: onPressedButton),
+                  child: buttonText == 'Book' 
+                      ? PrimaryButton(label: buttonText, onPressed: onPressedButton)
+                      : SecondaryButton(label: buttonText, onPressed: onPressedButton),
                 ),
               )
             ],

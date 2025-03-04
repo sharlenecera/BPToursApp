@@ -14,7 +14,7 @@ class SecondaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(Theme.of(context).shadowColor),
+        backgroundColor: WidgetStateProperty.all(Color(0xFF797979)),
         // padding: WidgetStateProperty.all(EdgeInsets.symmetric(vertical: 16)),
         shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       ),
