@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
+
 import 'widgets/widgets.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -13,7 +15,7 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   final _controller = TextEditingController();
   Future<List<Map<String, dynamic>>>? _futureSearchResults;
-  final apiKey = 'd092a571f74a5876b63f080987632294';
+  final _apiKey = 'd092a571f74a5876b63f080987632294';
   
   String _latitude = '';
   String _longitude = '';
@@ -21,6 +23,7 @@ class _WeatherPageState extends State<WeatherPage> {
   String _cityName = '';
   String _weatherDescription = '';
   String _mainTemperature = '';
+  List<Widget> _every3HourTemperature = [];
 
 
   Future<List<Map<String, dynamic>>> _searchLocation() async {
@@ -36,7 +39,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
     final countryCode = 'GB';
     final resultsLimit = 5;
-    final apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=$city,$countryCode&limit=$resultsLimit&appid=$apiKey';
+    final apiUrl = 'http://api.openweathermap.org/geo/1.0/direct?q=$city,$countryCode&limit=$resultsLimit&appid=$_apiKey';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -69,7 +72,7 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Future<void> _getWeatherData() async {
-  final apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lat=$_latitude&lon=$_longitude&appid=$apiKey';
+  final apiUrl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&lat=$_latitude&lon=$_longitude&appid=$_apiKey'; 
 
   try {
     final response = await http.get(Uri.parse(apiUrl));
@@ -86,8 +89,47 @@ class _WeatherPageState extends State<WeatherPage> {
     setState(() {
       _errorMessage = 'Error occurred: $e';
     });
+    }
   }
-}
+
+  Future<void> _getEvery3HourWeatherData() async {
+  // set units to metric and limit results to 8
+  final apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=$_latitude&lon=$_longitude&appid=$_apiKey&units=metric&cnt=8'; 
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      _every3HourTemperature = _getEvery3HourTemperatures(data['list']);
+    } else if (response.statusCode == 429) {
+      setState(() {
+        final data = json.decode(response.body);
+        _errorMessage = data['message'];
+      });
+    } else {
+      setState(() {
+        _errorMessage = 'Error getting weather data: ${response.statusCode}';
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _errorMessage = 'Error occurred: $e';
+    });
+    }
+  }
+
+  List<Widget> _getEvery3HourTemperatures(List<dynamic> weatherData) {
+    List<Widget> temperatures = [];
+    for (var i = 0; i < 8; i++) {
+      int unixTime = weatherData[i]['dt'];
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000, isUtc: true);
+      String formattedTime = DateFormat('HH:mm').format(dateTime.toLocal());
+      String temperature = weatherData[i]['main']['temp'].round().toString();
+
+      temperatures.add(HourlyTemperature(time: formattedTime, temperature: '$temperature°C'));
+    }
+    return temperatures;
+  }
 
   @override
   void initState() {
@@ -149,7 +191,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     final results = snapshot.data!;
 
                     if (results.isEmpty) {
-                      children = <Widget>[Center(child: Text('No results found'))];
+                      return Center(child: Text('No results found'));
                     }
                     // print(results);
 
@@ -157,9 +199,11 @@ class _WeatherPageState extends State<WeatherPage> {
                     _longitude = results[0]['longitude'];
                     _cityName = results[0]['cityName'];
                     _getWeatherData();
-                    
+                    _getEvery3HourWeatherData();
+
                     children = <Widget>[Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // trying to display the results but currently not working
                         // Expanded(
@@ -180,8 +224,6 @@ class _WeatherPageState extends State<WeatherPage> {
                         //     },
                         //   ),
                         // ),
-                        Text('Latitude: $_latitude'),
-                        Text('Longitude: $_longitude'),
                         if (_errorMessage.isNotEmpty)
                           Text(
                             _errorMessage,
@@ -201,7 +243,7 @@ class _WeatherPageState extends State<WeatherPage> {
                             children: [
                               Text('$_mainTemperature°C', style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 80.0)),
                               SizedBox(width: 10),
-                              Text('$_weatherDescription', style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
+                              Text(_weatherDescription, style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 32.0)),
                             ],
                           ),
                         ),
@@ -209,7 +251,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           padding: const EdgeInsets.only(left: 20.0),
                           child: Row(
                             children: [
-                              Text('Feb 11, 2025', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.0)),
+                              Text(DateFormat('MMMM d, y').format(DateTime.now()), style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20.0)),
                             ],
                           ),
                         ),
@@ -226,16 +268,7 @@ class _WeatherPageState extends State<WeatherPage> {
                                   ),
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
-                                    children: [
-                                      HourlyTemperature(time: '7:00', temperature: '5°C'),
-                                      HourlyTemperature(time: '8:00', temperature: '5°C'),
-                                      HourlyTemperature(time: '9:00', temperature: '5°C'),
-                                      HourlyTemperature(time: '10:00', temperature: '5°C'),
-                                      HourlyTemperature(time: '11:00', temperature: '6°C'),
-                                      HourlyTemperature(time: '12:00', temperature: '7°C'),
-                                      HourlyTemperature(time: '13:00', temperature: '8°C'),
-                                      HourlyTemperature(time: '14:00', temperature: '7°C'),
-                                    ],
+                                    children: _every3HourTemperature,
                                   )
                                 ),
                               )
