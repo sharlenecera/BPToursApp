@@ -16,7 +16,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _birthDateController = TextEditingController();
+  final TextEditingController _birthdayController = TextEditingController();
   final TextEditingController _homeCityController = TextEditingController();
   String _errorMessage = '';
 
@@ -31,7 +31,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _firstNameController.dispose();
     _surnameController.dispose();
     _usernameController.dispose();
-    _birthDateController.dispose();
+    _birthdayController.dispose();
     _homeCityController.dispose();
     super.dispose();
   }
@@ -48,7 +48,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _firstNameController.text = user['firstName'] ?? '';
             _surnameController.text = user['surname'] ?? '';
             _usernameController.text = user['username'] ?? '';
-            _birthDateController.text = user['birthday'] ?? '';
+            _birthdayController.text = user['birthday'] ?? '';
             _homeCityController.text = user['homeCity'] ?? '';
           });
         }
@@ -57,7 +57,38 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void updateProfile() async {
-    
+    final currentUser = await storage.read(key: 'currentUser');
+    if (currentUser != null) {
+      final usersJSON = await storage.read(key: 'users');
+      if (usersJSON != null) {
+        List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+        final userIndex = users.indexWhere((user) => user['username'] == currentUser);
+        if (userIndex > -1) {
+          users[userIndex]['firstName'] = _firstNameController.text;
+          users[userIndex]['surname'] = _surnameController.text;
+          users[userIndex]['username'] = _usernameController.text;
+          users[userIndex]['birthday'] = _birthdayController.text;
+          users[userIndex]['homeCity'] = _homeCityController.text;
+
+          await storage.write(key: 'users', value: json.encode(users));
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        } else {
+          setState(() {
+            _errorMessage = 'User not found.';
+          });
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'No users found.';
+        });
+      }
+    } else {
+      setState(() {
+        _errorMessage = 'No current user found.';
+      });
+    }
   }
 
   @override
@@ -138,14 +169,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0),
-                  child: Text('Birth Date', style: Theme.of(context).textTheme.headlineSmall,),
+                  child: Text('Birthday', style: Theme.of(context).textTheme.headlineSmall,),
                 ),
               ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                controller: _birthDateController,
+                controller: _birthdayController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                 ),
