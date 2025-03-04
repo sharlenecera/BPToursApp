@@ -5,6 +5,7 @@ import 'login_screen.dart';
 import 'signup_screen.dart';
 import 'home_screen.dart';
 import 'notifications_screen.dart';
+import 'edit_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/home': (context) => const HomePage(username: 'admin'),
         '/notifications': (context) => const NotificationsPage(),
+        '/editProfile': (context) => const EditProfilePage(),
       },
     );
   }

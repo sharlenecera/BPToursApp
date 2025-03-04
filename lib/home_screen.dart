@@ -196,7 +196,13 @@ class _HomePage extends State<HomePage> {
               children: [
                 SizedBox(width: 10),
                 Text(navbarOptions.elementAt(_selectedIndex), style: Theme.of(context).textTheme.displayMedium),
-                SizedBox(width: 180),
+                _selectedIndex == 2 ? IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/editProfile');
+                  },
+                ) : Container(),
+                SizedBox(width: 130),
                 _selectedIndex == 2 ? NotificationButton(onPressed: () {
                   Navigator.pushNamed(context, '/notifications');
                 }) : Container(),
