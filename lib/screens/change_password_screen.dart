@@ -30,7 +30,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             final user = users[userIndex];
             if (user['password'] == _oldPassword) {
               if (_newPassword == _repeatNewPassword) {
+                // Setting new password
                 users[userIndex]['password'] = _newPassword;
+                // Writing it to secure storage
                 await _storage.write(key: 'users', value: json.encode(users));
                 if (mounted) {
                   Navigator.pop(context, true); // Return true to indicate success

@@ -46,6 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return;
       }
 
+      // Add new user to users list
       users.add({
         'firstName': _firstName,
         'surname': _surname,
@@ -55,14 +56,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'homeCity': '',
         'IdsOfToursBooked': [],
       });
+
       await _storage.write(key: 'users', value: json.encode(users));
       await _storage.write(key: 'currentUser', value: _username);
-      print({
-        'firstName': _firstName,
-        'surname': _surname,
-        'username': _username,
-        'password': _password
-      });
 
       // Navigate to home screen after async operations are complete
       if (mounted) {

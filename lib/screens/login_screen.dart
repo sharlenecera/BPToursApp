@@ -88,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
       List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
       print('users: $users');
 
+      // Get the user with the entered username and password
       final user = users.firstWhere(
         (user) => user['username'] == _username && user['password'] == _password,
         orElse: () => {},
@@ -98,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await _storage.write(key: 'currentUser', value: _username);
 
         if (mounted) {
+          // Navigate to the home screen
           Navigator.pushNamed(context, '/home');
         }
       } else {

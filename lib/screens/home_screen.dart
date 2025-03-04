@@ -66,6 +66,7 @@ class _HomePage extends State<HomePage> {
       final toursJSON = await _storage.read(key: 'tours');
       if (toursJSON != null) {
         List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+        // Checking if the user is in the list of users who booked the tours
         return tours.where((tour) => tour['usersBooked'].contains(_username)).toList();
       } else {
         return [];
@@ -76,6 +77,7 @@ class _HomePage extends State<HomePage> {
     }
   }
 
+  // Pop up to show an error has occurred
   void showError(String errorMessage) {
     showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
@@ -105,8 +107,12 @@ class _HomePage extends State<HomePage> {
         final userIndex = users.indexWhere((user) => user['username'] == _username);
         if (tourIndex > -1 && userIndex > -1) {
           if (!tours[tourIndex]['usersBooked'].contains(_username)) {
+            // Adding the user to the list of users who booked the tour
             tours[tourIndex]['usersBooked'].add(_username);
+            // Adding the tour ID to the list of tours booked by the user
             users[userIndex]['IdsOfToursBooked'].add(tourId);
+
+            // Updating the tours and users in the secure storage
             await _storage.write(key: 'tours', value: json.encode(tours));
             await _storage.write(key: 'users', value: json.encode(users));
             setState(() {});
@@ -120,6 +126,7 @@ class _HomePage extends State<HomePage> {
     }
   }
 
+  // Pop up to confirm booking
   void onBookButtonPressed(tourID) {
     showDialog(
       context: context,
@@ -160,8 +167,12 @@ class _HomePage extends State<HomePage> {
         final userIndex = users.indexWhere((user) => user['username'] == _username);
         if (tourIndex > -1 && userIndex > -1) {
           if (tours[tourIndex]['usersBooked'].contains(_username)) {
+            // Removing the user from the list of users who booked the tour
             tours[tourIndex]['usersBooked'].remove(_username);
+            // Removing the tour ID from the list of tours booked by the user
             users[userIndex]['IdsOfToursBooked'].remove(tourId);
+
+            // Updating the tours and users in the secure storage
             await _storage.write(key: 'tours', value: json.encode(tours));
             await _storage.write(key: 'users', value: json.encode(users));
             setState(() {});
@@ -193,7 +204,6 @@ class _HomePage extends State<HomePage> {
               onPressed: () async {
                 await cancelBooking(tourId);
                 Navigator.of(context).pop(); // Close the dialog
-                print('Booking cancelled.');
               },
               child: Text('Yes'),
             ),

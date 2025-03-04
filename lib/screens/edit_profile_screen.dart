@@ -43,8 +43,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
         final usersJSON = await _storage.read(key: 'users');
         if (usersJSON != null) {
           List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+          // Get current user's user object
           final user = users.firstWhere((user) => user['username'] == currentUser, orElse: () => {});
           if (user.isNotEmpty) {
+            // Display user's profile data into the text fields
             setState(() {
               _firstNameController.text = user['firstName'] ?? '';
               _surnameController.text = user['surname'] ?? '';
@@ -83,12 +85,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
           List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
           final userIndex = users.indexWhere((user) => user['username'] == currentUser);
           if (userIndex > -1) {
+            // Assigning all the values whether changed or not to the users object.
             users[userIndex]['firstName'] = _firstNameController.text;
             users[userIndex]['surname'] = _surnameController.text;
             users[userIndex]['username'] = _usernameController.text;
             users[userIndex]['birthday'] = _birthdayController.text;
             users[userIndex]['homeCity'] = _homeCityController.text;
 
+            // Writing the updated users object to the secure storage
             await _storage.write(key: 'users', value: json.encode(users));
             if (mounted) {
               Navigator.pop(context, true); // Return true to indicate success
@@ -234,7 +238,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             TextButton(
               onPressed: () {
-                // navigate to change password page
+                // Navigate to change password page
                 Navigator.pushNamed(context, '/changePassword');
               },
               child: Text('Change Password?', style: Theme.of(context).textTheme.labelSmall),
