@@ -18,12 +18,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePage extends State<HomePage> {
   final storage = FlutterSecureStorage();
+  String _username = '';
   int _selectedIndex = 0;
   static const List<String> navbarOptions = [
     '',
     'Weather',
     'Profile'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() async {
+    final currentUser = await storage.read(key: 'currentUser');
+    setState(() {
+      _username = currentUser ?? '';
+    });
+  }
 
   void onNavOptionPressed(int index) {
     setState(() {
@@ -41,17 +55,56 @@ class _HomePage extends State<HomePage> {
   }
 
   Future<List<Map<String, dynamic>>> getBookedTours() async {
-    final currentUser = await storage.read(key: 'currentUser');
     final toursJSON = await storage.read(key: 'tours');
-    if (toursJSON != null && currentUser != null) {
+    if (toursJSON != null) {
       List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
-      return tours.where((tour) => tour['usersBooked'].contains(currentUser)).toList();
+      return tours.where((tour) => tour['usersBooked'].contains(_username)).toList();
     } else {
       return [];
     }
   }
 
-  void onBookButtonPressed() {
+  void showError(String errorMessage) {
+    showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Error'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    });
+  }
+
+  Future<void> bookTour(String tourId) async {
+    final toursJSON = await storage.read(key: 'tours');
+    final usersJSON = await storage.read(key: 'users');
+
+    if (toursJSON != null && usersJSON != null) {
+      List<Map<String, dynamic>> tours = List<Map<String, dynamic>>.from(json.decode(toursJSON));
+      List<Map<String, dynamic>> users = List<Map<String, dynamic>>.from(json.decode(usersJSON));
+      final tourIndex = tours.indexWhere((tour) => tour['ID'] == tourId);
+      final userIndex = users.indexWhere((user) => user['username'] == _username);
+      if (tourIndex > -1 && userIndex > -1) {
+        if (!tours[tourIndex]['usersBooked'].contains(_username)) {
+          tours[tourIndex]['usersBooked'].add(_username);
+          users[userIndex]['IdsOfToursBooked'].add(tourId);
+          await storage.write(key: 'tours', value: json.encode(tours));
+          await storage.write(key: 'users', value: json.encode(users));
+          setState(() {});
+        } else {
+          showError('You have already booked this tour.');
+        }
+      }
+    }
+  }
+
+  void onBookButtonPressed(tourID) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -67,10 +120,9 @@ class _HomePage extends State<HomePage> {
             ),
             TextButton(
               onPressed: () {
-                
+                bookTour(tourID);
 
                 Navigator.of(context).pop(); // Close the dialog
-                print('Tour booked.');
               },
               child: Text('Yes'),
             ),
@@ -134,6 +186,7 @@ class _HomePage extends State<HomePage> {
                               itemCount: tours.length,
                               itemBuilder: (context, index) {
                                 final tour = tours[index];
+                                final id = tour['ID'];
                                 final cityName = tour['cityName'];
                                 final date = tour['date'];
                                 final description = tour['description'];
@@ -146,7 +199,10 @@ class _HomePage extends State<HomePage> {
                                   description: description,
                                   maxCapacity: maxCapacity,
                                   numberOfUsersBooked: numberOfUsersBooked,
-                                  onPressedButton: onBookButtonPressed,
+                                  buttonText: 'Book',
+                                  onPressedButton: () {
+                                    onBookButtonPressed(id);
+                                  },
                                 );
                               },
                             );
@@ -185,6 +241,7 @@ class _HomePage extends State<HomePage> {
                                   description: description,
                                   maxCapacity: maxCapacity,
                                   numberOfUsersBooked: numberOfUsersBooked,
+                                  buttonText: 'Cancel',
                                   onPressedButton: onCancelButtonPressed,
                                 );
                               },
