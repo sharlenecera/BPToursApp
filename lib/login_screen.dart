@@ -21,6 +21,21 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     clearSecureStorage();
+    initialiseStorage();
+  }
+
+  void initialiseStorage() async {
+    await storage.write(key: 'users', value: json.encode([
+      {
+        'firstName': 'John',
+        'surname': 'Doe',
+        'username': 'admin',
+        'password': '1234',
+        'birthday': '01/01/2000',
+        'homeCity': 'Nottingham',
+      },
+    ]));
+    print('Storage initialised');
   }
 
   void clearSecureStorage() async {
@@ -38,13 +53,23 @@ class _LoginScreenState extends State<LoginScreen> {
     List<Map<String, dynamic>> users = usersJSON != null ? List<Map<String, dynamic>>.from(json.decode(usersJSON)) : [];
     print('users: $users');
 
-    setState(() {
-      if (users.any((user) => user['username'] == _username && user['password'] == _password)) {
+    final user = users.firstWhere(
+      (user) => user['username'] == _username && user['password'] == _password,
+      orElse: () => {},
+    );
+
+    if (user.isNotEmpty) {
+      // Store the logged-in username
+      await storage.write(key: 'currentUser', value: _username);
+
+      if (mounted) {
         Navigator.pushNamed(context, '/home');
-      } else {
-        _errorMessage = 'Invalid credentials';
       }
-    });
+    } else {
+      setState(() {
+        _errorMessage = 'Invalid credentials';
+      });
+    }
   }
 
   // void login() {
@@ -98,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text('Do not have an account?', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13.0)),
                 SizedBox(width: 10),
                 GestureDetector(
-                  onTap: onSignUpButtonPressed, // TODO: Direct user to sign up screen
+                  onTap: onSignUpButtonPressed,
                   child: Text('Sign Up', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 13.0)),
                 ),
                 // TextButton(

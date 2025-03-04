@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'widgets/widgets.dart';
 import 'weather_screen.dart';
+import 'profile_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({required this.username, super.key});
@@ -139,24 +140,7 @@ class _HomePage extends State<HomePage> {
                 // Weather Page -----------------------------------------------------------------
                 ? WeatherPage()
                 // Profile Page -----------------------------------------------------------------
-                : Container(
-                  color: const Color(0xFFACD4AE),
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('John Doe', style: Theme.of(context).textTheme.displaySmall),
-                        Text('john_doe1', style: Theme.of(context).textTheme.labelLarge),
-                        Text('Birthday', style: Theme.of(context).textTheme.headlineSmall),
-                        Text('Unknown', style: Theme.of(context).textTheme.bodyLarge),
-                        Text('Home City', style: Theme.of(context).textTheme.headlineSmall),
-                        Text('Unknown', style: Theme.of(context).textTheme.bodyLarge),
-                      ],
-                    ),
-                  ),
-                ),
+                : ProfilePage(),
           bottomNavigationBar: BottomNavigationBar(
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

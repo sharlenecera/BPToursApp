@@ -30,8 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (password != repeatPassword) {
       setState(() {
         errorMessage = 'Passwords do not match';
-        print('password: $password');
-        print('repeat: $repeatPassword');
       });
       return;
     }
@@ -51,9 +49,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       'firstName': firstName,
       'surname': surname,
       'username': username,
-      'password': password
+      'password': password,
+      'birthday': '',
+      'homeCity': '',
     });
     await storage.write(key: 'users', value: json.encode(users));
+    await storage.write(key: 'currentUser', value: username);
+    print({
+      'firstName': firstName,
+      'surname': surname,
+      'username': username,
+      'password': password
+    });
 
     // Navigate to home screen after async operations are complete
     if (mounted) {
@@ -84,7 +91,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => username = value,
+                onChanged: (value) => firstName = value,
                 decoration: InputDecoration(
                   label: Text('First Name', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
@@ -94,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) => username = value,
+                onChanged: (value) => surname = value,
                 decoration: InputDecoration(
                   label: Text('Surname', style: Theme.of(context).textTheme.bodyMedium),
                   border: OutlineInputBorder(),
